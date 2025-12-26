@@ -17,10 +17,9 @@ class ApiService {
                     resolve({
                         id: user.uid,
                         email: user.email || '',
-                        name: user.displayName || 'Manager',
-                        teamId: 'team-wts', // Default for mock
                         role: 'MANAGER',
-                        createdAt: user.metadata.creationTime || new Date().toISOString()
+                        subscriptionTier: 'FREE',
+                        teamId: 'team-wts'
                     });
                 } else {
                     // For "public" access or redirect, we might return a guest user or reject.
