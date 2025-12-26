@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Trophy, Home, Users, Calendar, Wallet, Settings, Menu, Bell, ClipboardList, Table, Tv, MessageSquare, Globe, UserPlus, Star } from 'lucide-react';
 import { useState, useEffect } from 'react';
@@ -14,71 +14,41 @@ export default function DashboardLayout({
 }: {
     children: React.ReactNode;
 }) {
-    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-    const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
-    const { t } = useLanguage();
-
-    // --- Data State ---
-    const [user, setUser] = useState<User | null>(null);
-    const [team, setTeam] = useState<Team | null>(null);
-
-    const pathname = usePathname();
+    const [isLoading, setIsLoading] = useState(true);
+    const router = useRouter(); // Need to add import
+    // ...
 
     useEffect(() => {
         const loadData = async () => {
-            const currentUser = await api.getCurrentUser();
-            setUser(currentUser);
-            if (currentUser.teamId) {
-                const currentTeam = await api.getTeam(currentUser.teamId);
-                setTeam(currentTeam);
+            try {
+                const currentUser = await api.getCurrentUser();
+                setUser(currentUser);
+                if (currentUser.teamId) {
+                    const currentTeam = await api.getTeam(currentUser.teamId);
+                    setTeam(currentTeam);
+                }
+            } catch (error) {
+                console.error("Auth check failed:", error);
+                router.push('/auth'); // Redirect to login/auth if not logged in
+            } finally {
+                setIsLoading(false);
             }
         };
         loadData();
+        // ...
+    }, [router]);
 
-        const handleTeamUpdate = () => loadData();
-        if (typeof window !== 'undefined') {
-            window.addEventListener('team-update', handleTeamUpdate);
-        }
-        return () => {
-            if (typeof window !== 'undefined') {
-                window.removeEventListener('team-update', handleTeamUpdate);
-            }
-        };
-    }, []);
+    // ...
 
-    // Helper to get initials
-    const getInitials = (email: string) => {
-        // Simple fallback if no name field in User yet (mock has email)
-        // Actually mock user has no name, but we can infer or add it.
-        // Schema has email. Let's just use "AC" if not present or parse email.
-        return "AC"; // Keeping generic for now as User schema only has email/role/etc
-    };
+    if (isLoading) {
+        return (
+            <div className="flex h-screen w-full items-center justify-center bg-[#050D05]">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-wts-green"></div>
+            </div>
+        );
+    }
 
-    const menuGroups = [
-        [
-            { icon: Home, label: t('nav.dashboard'), href: '/dashboard' }
-        ],
-        [
-            { icon: Tv, label: t('nav.matchday'), href: '/dashboard/matchday' },
-            { icon: Users, label: t('nav.squad'), href: '/dashboard/squad' },
-            { icon: ClipboardList, label: t('nav.tactics'), href: '/dashboard/tactics' },
-        ],
-        [
-            { icon: Calendar, label: t('nav.fixtures'), href: '/dashboard/fixtures' },
-            { icon: Table, label: t('nav.leagues'), href: '/dashboard/leagues' },
-        ],
-        [
-            { icon: Wallet, label: t('nav.fees'), href: '/dashboard/fees' },
-            { icon: MessageSquare, label: t('nav.comms'), href: '/dashboard/comms' },
-        ],
-        [
-            { icon: Globe, label: t('nav.find_league'), href: '/dashboard/find-league' },
-            { icon: UserPlus, label: t('nav.transfer_market'), href: '/dashboard/transfer-market' },
-            { icon: Star, label: t('nav.goal_week'), href: '/dashboard/goal-of-week' },
-        ]
-    ];
-
-    if (!user) return null; // Or loading spinner
+    if (!user) return null; // Should have redirected by now
 
     return (
         <div className="flex h-screen bg-[#050D05] selection:bg-wts-green/30 overflow-hidden relative">
