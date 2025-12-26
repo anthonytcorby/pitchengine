@@ -305,16 +305,6 @@ export default function MatchdayPage() {
                                     lineup={lineupMap}
                                     squad={squad}
                                     teamSize={teamSize}
-                                    readonly={false} // Allow interactions? User asked for read-only before. But now they want toggle. 
-                                    // Actually, keep safe interactions but locked.
-                                    // TacticsBoard logic: if locked, you can't move nodes. 
-                                    // Let's keep it mostly read-only visual but enable the toggle via props.
-                                    // Passing 'readonly={true}' disables DnD and interactions. 
-                                    // Does readonly disable the toggle? 
-                                    // Check TacticsBoard: 'onTogglePossession' is rendered in Header which is rendered even if readonly?
-                                    // View file shows: Header is rendered. 
-                                    // But handleDragOver returns if readonly.
-                                    // So readonly is safe.
                                     readonly={true}
                                     onDrop={() => { }}
                                     onNodeClick={() => { }}
