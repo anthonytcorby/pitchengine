@@ -46,7 +46,10 @@ export function OnboardingSteps({ currentStep, role, data, onSetRole, onUpdate, 
             <div className="grid md:grid-cols-2 gap-6">
                 {/* Manager Card */}
                 <button
-                    onClick={() => onSetRole('MANAGER')}
+                    onClick={() => {
+                        onSetRole('MANAGER');
+                        onNext();
+                    }}
                     className="group relative p-8 bg-black/40 hover:bg-black/60 border border-white/10 hover:border-wts-green/50 rounded-2xl transition-all text-left flex flex-col h-[300px]"
                 >
                     <div className="w-14 h-14 rounded-full bg-white/5 group-hover:bg-wts-green/10 flex items-center justify-center border border-white/10 group-hover:border-wts-green mb-auto transition-colors">
@@ -64,7 +67,10 @@ export function OnboardingSteps({ currentStep, role, data, onSetRole, onUpdate, 
 
                 {/* Player Card */}
                 <button
-                    onClick={() => onSetRole('PLAYER')}
+                    onClick={() => {
+                        onSetRole('PLAYER');
+                        onNext();
+                    }}
                     className="group relative p-8 bg-black/40 hover:bg-black/60 border border-white/10 hover:border-wts-green/50 rounded-2xl transition-all text-left flex flex-col h-[300px]"
                 >
                     <div className="w-14 h-14 rounded-full bg-white/5 group-hover:bg-wts-green/10 flex items-center justify-center border border-white/10 group-hover:border-wts-green mb-auto transition-colors">
@@ -559,9 +565,14 @@ export function OnboardingSteps({ currentStep, role, data, onSetRole, onUpdate, 
             )}
 
             <AnimatePresence mode="wait">
-                {/* Step 0: Role Selection */}
+                {/* Step 0: Language Selection */}
                 {currentStep === 0 && (
-                    <motion.div key="step-0" initial="initial" animate="animate" exit="exit" variants={pageVariants} className="min-h-[60vh] flex flex-col justify-center py-10">
+                    <LanguageSelectionScreen onNext={onNext} />
+                )}
+
+                {/* Step 1: Role Selection */}
+                {currentStep === 1 && (
+                    <motion.div key="step-1" initial="initial" animate="animate" exit="exit" variants={pageVariants} className="min-h-[60vh] flex flex-col justify-center py-10">
                         <ScreenRoleChoice />
                     </motion.div>
                 )}
@@ -569,35 +580,34 @@ export function OnboardingSteps({ currentStep, role, data, onSetRole, onUpdate, 
                 {/* Manager Flow */}
                 {role === 'MANAGER' && (
                     <motion.div key={`manager-${currentStep}`} initial="initial" animate="animate" exit="exit" variants={pageVariants} className="min-h-[60vh] flex flex-col justify-center py-10">
-                        {currentStep === 1 && <ScreenManagerValue />}
-                        {currentStep === 2 && <ScreenManagerScope />}
-                        {currentStep === 3 && (
+                        {currentStep === 2 && <ScreenManagerValue />}
+                        {currentStep === 3 && <ScreenManagerScope />}
+                        {currentStep === 4 && (
                             <CreateClubScreen
                                 data={data}
                                 onUpdate={onUpdate}
                                 onNext={onNext}
                             />
                         )}
-                        {currentStep === 4 && <ScreenAddPlayers />}
-                        {currentStep === 5 && <ScreenMatchDefaults />}
-                        {currentStep === 6 && (
+                        {currentStep === 5 && <ScreenAddPlayers />}
+                        {currentStep === 6 && <ScreenMatchDefaults />}
+                        {currentStep === 7 && (
                             <TacticsPreviewScreen
                                 data={data}
                                 onNext={onNext}
                             />
                         )}
-                        {currentStep === 7 && <ScreenFeesClarity />}
-                        {currentStep === 8 && <ScreenManagerConfirmation />}
+                        {currentStep === 8 && <ScreenFeesClarity />}
+                        {currentStep === 9 && <ScreenManagerConfirmation />}
                     </motion.div>
                 )}
 
-                {/* Player Flow */}
                 {role === 'PLAYER' && (
                     <motion.div key={`player-${currentStep}`} initial="initial" animate="animate" exit="exit" variants={pageVariants} className="min-h-[60vh] flex flex-col justify-center py-10">
-                        {currentStep === 1 && <ScreenPlayerValue />}
-                        {currentStep === 2 && <ScreenPlayerJoin />}
-                        {currentStep === 3 && <ScreenPlayerProfile />}
-                        {currentStep === 4 && <ScreenPlayerConfirmation />}
+                        {currentStep === 2 && <ScreenPlayerValue />}
+                        {currentStep === 3 && <ScreenPlayerJoin />}
+                        {currentStep === 4 && <ScreenPlayerProfile />}
+                        {currentStep === 5 && <ScreenPlayerConfirmation />}
                     </motion.div>
                 )}
             </AnimatePresence>

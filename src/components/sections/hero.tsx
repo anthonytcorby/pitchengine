@@ -143,7 +143,7 @@ export function Hero() {
                     {/* Badge */}
                     <div className="inline-flex items-center space-x-2 border-l-2 border-wts-green pl-3 py-1 bg-white/5 backdrop-blur-sm pr-4">
                         <div className="w-1.5 h-1.5 rounded-full bg-wts-green animate-pulse" />
-                        <span className="text-[10px] font-bold tracking-widest text-gray-300 uppercase font-outfit">FIVE-A-SIDE AND SUNDAY LEAGUE OPTIMIZED</span>
+                        <span className="text-[10px] font-bold tracking-widest text-gray-300 uppercase font-outfit">FIVE-A-SIDE, SIX-A-SIDE, SEVEN-A-SIDE AND SUNDAY LEAGUE OPTIMIZED</span>
                     </div>
 
                     {/* Heading */}
