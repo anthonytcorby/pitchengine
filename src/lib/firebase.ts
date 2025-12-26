@@ -2,6 +2,13 @@ import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
+// --- INTERNAL TEST MODE ---
+export const INTERNAL_TEST_MODE = true;
+
+if (typeof window !== 'undefined' && INTERNAL_TEST_MODE) {
+    console.log("INTERNAL TEST MODE — AUTH DISABLED");
+}
+
 const firebaseConfig = {
     apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || 'mock_key',
     authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || 'mock_domain',
@@ -13,5 +20,7 @@ const firebaseConfig = {
 
 // Initialize Firebase once
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-export const auth = getAuth(app);
+
+// Conditionally initialize Auth
+export const auth = INTERNAL_TEST_MODE ? null : getAuth(app);
 export const db = getFirestore(app);
