@@ -77,43 +77,6 @@ export const FORMATIONS_BY_SIZE: Record<number, Record<string, { x: number; y: n
         // Wait, previous 4-4-2 had 9 as ST-R.
         // So this is 0,1,2,3,4, 5,6,7,8, 9,10. Correct count.
 
-        "4-3-3 DM Wide": [
-            { x: 50, y: 90, role: 'GK' },    // 0
-            { x: 85, y: 70, role: 'RB' },    // 1
-            { x: 62, y: 75, role: 'CB' },    // 2
-            { x: 38, y: 75, role: 'CB' },    // 3
-            { x: 15, y: 70, role: 'LB' },    // 4
-            { x: 50, y: 60, role: 'CDM' },   // 5 (RCM -> CDM)
-            { x: 65, y: 45, role: 'CM' },    // 6 (LCM -> RCM) - Swap sides? Or consistent?
-            // 4-4-2 LCM(6) is left-central. 4-3-3 RCM is right-central.
-            // Ideally LCM->LCM.
-            // Let's put 6 at LCM.
-            { x: 35, y: 45, role: 'CM' },    // 6 (LCM)
-            { x: 85, y: 25, role: 'RW' },    // 7 (RM -> RW) - Perfect
-            { x: 15, y: 25, role: 'LW' },    // 8 (LM -> LW) - Perfect
-            { x: 65, y: 45, role: 'CM' },    // 9 (ST-R -> RCM) - Striker drops to mid.
-            // Wait, array index must be unique.
-            // I need 0..10 indices.
-            // 4-3-3 has: GK, RB, RCB, LCB, LB, CDM, LCM, RCM, RW, LW, ST.
-            // 5: CDM
-            // 6: LCM
-            // 7: RW
-            // 8: LW
-            // 9: RCM (ST drops)
-            // 10: ST (ST stays)
-            { x: 50, y: 15, role: 'ST' },    // 10
-        ], // Wait, writing the array:
-        // [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-        // Values:
-        // 5: CDM
-        // 6: LCM
-        // 9: RCM
-        // 7: RW
-        // 8: LW
-        // 10: ST
-        // This order in array is: 0,1,2,3,4, 5, 6, 9(Placeholder?), 7, 8, 10?
-        // The ARRAY ORDER matters for the index key.
-        // So I must emit them in order 0..10.
 
         "4-3-3 DM Wide": [
             { x: 50, y: 90, role: 'GK' },    // 0
