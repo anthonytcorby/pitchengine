@@ -29,6 +29,20 @@ export default function DashboardLayout({
     useEffect(() => {
         const loadData = async () => {
             try {
+                // Check Onboarding Status
+                const onboardingState = localStorage.getItem('wts-onboarding-progress');
+                if (onboardingState) {
+                    const parsed = JSON.parse(onboardingState);
+                    if (!parsed.completed) {
+                        router.push('/onboarding');
+                        return;
+                    }
+                } else {
+                    // No state means hasn't started -> redirect
+                    router.push('/onboarding');
+                    return;
+                }
+
                 const currentUser = await api.getCurrentUser();
                 setUser(currentUser);
                 if (currentUser.teamId) {
