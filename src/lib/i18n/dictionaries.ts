@@ -17,6 +17,7 @@ export const DICTIONARIES = {
                 about: 'About',
                 contact: 'Contact',
                 start_club: 'Start Club',
+                join_player: 'Join as Player',
                 start_free_club: 'Start Free Club',
             }
         },
@@ -165,6 +166,7 @@ export const DICTIONARIES = {
                 about: 'À propos',
                 contact: 'Contact',
                 start_club: 'Créer un Club',
+                join_player: 'Rejoindre comme Joueur',
                 start_free_club: 'Créer un Club Gratuit',
             }
         },
@@ -313,6 +315,7 @@ export const DICTIONARIES = {
                 about: 'Nosotros',
                 contact: 'Contacto',
                 start_club: 'Empezar Club',
+                join_player: 'Unirse como Jugador',
                 start_free_club: 'Empezar Club Gratis',
             }
         },
@@ -461,6 +464,7 @@ export const DICTIONARIES = {
                 about: 'Sobre',
                 contact: 'Contato',
                 start_club: 'Começar Clube',
+                join_player: 'Entrar como Jogador',
                 start_free_club: 'Começar Clube Grátis',
             }
         },

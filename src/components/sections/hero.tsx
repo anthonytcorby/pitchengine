@@ -330,7 +330,7 @@ export function Hero() {
                                 </div>
 
                                 {/* Features List (Static, Visible) */}
-                                <div className="w-full px-4 md:px-8">
+                                <div className="w-full px-4 md:px-8 mt-8">
                                     <div className="space-y-2 md:space-y-3">
                                         {['Squad Selection', 'Team Availability', 'Matchday Line-ups', 'Results Tracking', 'Fee Collection', 'Automated Match Reminders', 'Man of the Match Voting'].map((feature, i) => (
                                             <div key={i} className="flex items-center space-x-3 text-white">

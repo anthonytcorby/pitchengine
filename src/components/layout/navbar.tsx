@@ -48,8 +48,13 @@ export function Navbar() {
                         >
                             {t('common.login')}
                         </Link>
-                        <Link href="/onboarding?mode=create">
+                        <Link href="/onboarding?mode=join">
                             <Button variant="secondary" size="sm" className="skew-x-[-10deg]">
+                                <span className="skew-x-[10deg]">{t('landing.nav.join_player').toUpperCase()}</span>
+                            </Button>
+                        </Link>
+                        <Link href="/onboarding?mode=create">
+                            <Button variant="secondary" size="sm" className="skew-x-[-10deg] bg-wts-green text-black hover:bg-white border-none">
                                 <span className="skew-x-[10deg]">{t('landing.nav.start_club').toUpperCase()}</span>
                             </Button>
                         </Link>
