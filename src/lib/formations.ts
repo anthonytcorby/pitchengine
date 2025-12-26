@@ -78,19 +78,7 @@ export const FORMATIONS_BY_SIZE: Record<number, Record<string, { x: number; y: n
         // So this is 0,1,2,3,4, 5,6,7,8, 9,10. Correct count.
 
 
-        "4-3-3 DM Wide": [
-            { x: 50, y: 90, role: 'GK' },    // 0
-            { x: 85, y: 70, role: 'RB' },    // 1
-            { x: 62, y: 75, role: 'CB' },    // 2
-            { x: 38, y: 75, role: 'CB' },    // 3
-            { x: 15, y: 70, role: 'LB' },    // 4
-            { x: 50, y: 60, role: 'CDM' },   // 5
-            { x: 35, y: 45, role: 'CM' },    // 6 (LCM)
-            { x: 85, y: 25, role: 'RW' },    // 7 (RM -> RW)
-            { x: 15, y: 25, role: 'LW' },    // 8 (LM -> LW)
-            { x: 65, y: 45, role: 'CM' },    // 9 (ST -> RCM)
-            { x: 50, y: 15, role: 'ST' },    // 10
-        ],
+
 
         "4-2-3-1 Genpen": [
             { x: 50, y: 90, role: 'GK' },    // 0
