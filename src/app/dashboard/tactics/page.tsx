@@ -24,30 +24,44 @@ export default function TacticsPage() {
 
     const availableFormations = useMemo(() => getFormationsForSize(teamSize), [teamSize]);
 
-    // Ensure selected tactic is valid for current size
-    const [selectedTactic, setSelectedTactic] = useLocalStorage<string>('wts-tactics-formation-v2', Object.keys(availableFormations)[0]);
+    // --- POSSESSION STATE TRANSFORMATION ---
+    const [possessionMode, setPossessionMode] = useState<'in' | 'out'>('in');
+    const isIn = possessionMode === 'in';
 
-    // Cleaned up duplicate effect
+    // --- STORAGE HOOKS (Paired) ---
+    // In Possession
+    const [lineupIn, setLineupIn] = useLocalStorage<Record<number, string>>('wts-tactics-lineup-in', {});
+    const [tacticIn, setTacticIn] = useLocalStorage<string>('wts-tactics-formation-in', Object.keys(availableFormations)[0]);
+    const [customIn, setCustomIn] = useLocalStorage<FormationPos[] | null>('wts-tactics-custom-in', null);
 
-    // Actually simplicity:
+    // Out Possession
+    const [lineupOut, setLineupOut] = useLocalStorage<Record<number, string>>('wts-tactics-lineup-out', {});
+    const [tacticOut, setTacticOut] = useLocalStorage<string>('wts-tactics-formation-out', Object.keys(availableFormations)[0]);
+    const [customOut, setCustomOut] = useLocalStorage<FormationPos[] | null>('wts-tactics-custom-out', null);
 
-    // Watch teamSize changes specifically to clear custom formation
-    // Reset custom formation when team size changes
+    // Dynamic Getters/Setters based on Mode
+    const lineup = isIn ? lineupIn : lineupOut;
+    const setLineup = isIn ? setLineupIn : setLineupOut;
+
+    const selectedTactic = isIn ? tacticIn : tacticOut;
+    const setSelectedTactic = isIn ? setTacticIn : setTacticOut;
+
+    const customFormation = isIn ? customIn : customOut;
+    const setCustomFormation = isIn ? setCustomIn : setCustomOut;
+
+    // Global Data (Shared across phases)
+    const [subs, setSubs] = useLocalStorage<Record<number, string>>('wts-tactics-subs-v2', {});
+    const [setPieces, setSetPieces] = useLocalStorage<Record<string, string>>('wts-tactics-set-pieces-v2', {});
+    const [penalties, setPenalties] = useLocalStorage<Record<number, string>>('wts-tactics-penalties-v2', {});
+
+    // Effect: Reset Custom Formation when Team Size changes (applies to both if we wanted, but logic is tricky here as hooks assume generic. 
+    // We'll just reset current active one or rely on user to fix. Simplicity: Reset current active if invalid.
     useEffect(() => {
-        setCustomFormation(null);
-    }, [teamSize]);
-
-    // We also check validity of selectedTactic here
-    useEffect(() => {
+        // Validation logic
         if (!availableFormations[selectedTactic]) {
             setSelectedTactic(Object.keys(availableFormations)[0]);
         }
     }, [teamSize, availableFormations, selectedTactic, setSelectedTactic]);
-
-    // We already have an effect for validation, I will merge or replace it.
-    // The previous effect had `availableFormations` in deps. `availableFormations` changes when `teamSize` changes.
-    // So the existing effect fires. I just need to add `setCustomFormation(null)`.
-
 
 
     // Load Data
@@ -59,18 +73,6 @@ export default function TacticsPage() {
         loadSquad();
     }, []);
 
-    // Lineup: Map of Formation Index (0-10) -> Player ID
-    const [lineup, setLineup] = useLocalStorage<Record<number, string>>('wts-tactics-lineup-v2', {});
-
-    // Subs: Array of Player IDs (indices 0-6 usually, here keys are indices)
-    const [subs, setSubs] = useLocalStorage<Record<number, string>>('wts-tactics-subs-v2', {});
-
-    // Set Pieces: Map of Role (e.g. 'corners_l') -> Player ID
-    const [setPieces, setSetPieces] = useLocalStorage<Record<string, string>>('wts-tactics-set-pieces-v2', {});
-
-    // Penalties: Map of Order (1-5) -> Player ID
-    const [penalties, setPenalties] = useLocalStorage<Record<number, string>>('wts-tactics-penalties-v2', {});
-
     const [isSelectorOpen, setIsSelectorOpen] = useState(false);
     const [selectedNodeId, setSelectedNodeId] = useState<number | null>(null);
     const [currentRole, setCurrentRole] = useState<string>('');
@@ -78,7 +80,6 @@ export default function TacticsPage() {
     const [isConfirmed, setIsConfirmed] = useState(false);
     const [isTacticsOpen, setIsTacticsOpen] = useState(false);
     const [isLocked, setIsLocked] = useState(true);
-    const [customFormation, setCustomFormation] = useLocalStorage<FormationPos[] | null>('wts-tactics-custom-formation', null);
 
     // Derived State
     const currentFormation = customFormation || availableFormations[selectedTactic] || Object.values(availableFormations)[0];
@@ -97,16 +98,10 @@ export default function TacticsPage() {
         setCustomFormation(newFormation);
     };
 
-    // ... (keep handleDrop)
-
-    // ... (keep handleNodeClick)
-
     const handleSave = () => {
         setIsSaved(true);
         setTimeout(() => setIsSaved(false), 2000);
     };
-
-
 
     const handleDrop = (playerId: string, targetType: 'pitch' | 'sub' | 'setPiece' | 'penalty', targetIndex: number | string) => {
         const newLineup = { ...lineup };
@@ -114,14 +109,11 @@ export default function TacticsPage() {
         const newSetPieces = { ...setPieces };
         const newPenalties = { ...penalties };
 
-        // Clean up previous location if needed 
-        // For simplicity, we enforce uniqueness only on Lineup and Subs. A player can be in lineup AND take corners.
-        // We remove player from pitch/subs if they are moved TO pitch/subs to avoid duplicate on field/bench.
-
-        if (targetType === 'pitch' || targetType === 'sub') {
-            // Remove from lineup
+        // For pitch moves, we only remove from CURRENT phase lineup.
+        if (targetType === 'pitch') {
             Object.keys(newLineup).forEach(key => { if (newLineup[parseInt(key)] === playerId) delete newLineup[parseInt(key)]; });
-            // Remove from subs
+        }
+        if (targetType === 'sub') {
             Object.keys(newSubs).forEach(key => { if (newSubs[parseInt(key)] === playerId) delete newSubs[parseInt(key)]; });
         }
 
@@ -448,6 +440,8 @@ export default function TacticsPage() {
                                 onToggleLock={() => setIsLocked(!isLocked)}
                                 onNodeMove={handleNodeMove}
                                 teamSize={teamSize}
+                                possessionMode={possessionMode}
+                                onTogglePossession={setPossessionMode}
                             />
                         </div>
                     </div>

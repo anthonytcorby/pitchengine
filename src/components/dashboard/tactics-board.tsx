@@ -21,9 +21,27 @@ interface TacticsBoardProps {
     onNodeMove: (index: number, x: number, y: number) => void;
     readonly?: boolean;
     teamSize?: number;
+    possessionMode?: 'in' | 'out';
+    onTogglePossession?: (mode: 'in' | 'out') => void;
 }
 
-export function TacticsBoard({ formation, lineup, squad, onDrop, onNodeClick, onReset, onClear, onAutoPick, isLocked, onToggleLock, onNodeMove, readonly, teamSize = 11 }: TacticsBoardProps) {
+export function TacticsBoard({
+    formation,
+    lineup,
+    squad,
+    onDrop,
+    onNodeClick,
+    onReset,
+    onClear,
+    onAutoPick,
+    isLocked,
+    onToggleLock,
+    onNodeMove,
+    readonly,
+    teamSize = 11,
+    possessionMode = 'in',
+    onTogglePossession
+}: TacticsBoardProps) {
     const containerRef = useRef<HTMLDivElement>(null);
 
     const displayNames = React.useMemo(() => getPlayerDisplayNames(squad), [squad]);
@@ -151,14 +169,25 @@ export function TacticsBoard({ formation, lineup, squad, onDrop, onNodeClick, on
         <div className="flex flex-col h-full space-y-4">
             {/* Header / Controls */}
             <div className="flex items-center justify-between px-2">
-                <div className="flex items-center space-x-3">
-                    <div className="p-2.5 bg-wts-green/10 rounded-lg">
-                        <MousePointer2 size={20} className="text-wts-green" />
-                    </div>
-                    <div>
-                        <h3 className="text-lg font-bold text-white uppercase tracking-widest">Tactics</h3>
-                        <p className="text-sm text-gray-500 uppercase font-mono">{teamSize} v {teamSize}</p>
-                    </div>
+                <div className="flex items-center space-x-2 bg-black/40 rounded-lg p-1 border border-white/10">
+                    <button
+                        onClick={() => onTogglePossession?.('in')}
+                        className={`px-4 py-2 rounded-md text-[10px] font-bold uppercase tracking-widest transition-all ${possessionMode === 'in'
+                                ? 'bg-wts-green text-black shadow-lg'
+                                : 'text-gray-500 hover:text-white hover:bg-white/5'
+                            }`}
+                    >
+                        In Possession
+                    </button>
+                    <button
+                        onClick={() => onTogglePossession?.('out')}
+                        className={`px-4 py-2 rounded-md text-[10px] font-bold uppercase tracking-widest transition-all ${possessionMode === 'out'
+                                ? 'bg-red-500 text-white shadow-lg'
+                                : 'text-gray-500 hover:text-white hover:bg-white/5'
+                            }`}
+                    >
+                        Out of Poss
+                    </button>
                 </div>
                 {!readonly && (
                     <div className="flex items-center space-x-2">
@@ -175,16 +204,6 @@ export function TacticsBoard({ formation, lineup, squad, onDrop, onNodeClick, on
                         >
                             <Trash2 size={18} />
                             <span className="text-xs font-bold uppercase tracking-widest">Clear Team</span>
-                        </button>
-                        <button
-                            onClick={onReset}
-                            className="p-2.5 hover:bg-white/5 rounded-lg text-gray-500 hover:text-white transition-all flex items-center space-x-2"
-                        >
-                            <RotateCcw size={18} />
-                            <span className="text-xs font-bold uppercase tracking-widest">Reset</span>
-                        </button>
-                        <button className="p-2.5 hover:bg-white/5 rounded-lg text-gray-500 hover:text-white transition-all">
-                            <Settings2 size={18} />
                         </button>
                     </div>
                 )}
