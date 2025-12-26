@@ -11,19 +11,32 @@ class ApiService {
     // --- AUTH ---
 
     async getCurrentUser(): Promise<User> {
+        if (INTERNAL_TEST_MODE) {
+            return Promise.resolve({
+                id: "internal-test",
+                email: "internal@test.local",
+                role: "MANAGER",
+                subscriptionTier: "PRO",
+                teamId: "team-wts"
+            });
+        }
+
         return new Promise((resolve, reject) => {
+            if (!auth) {
+                reject("Auth not initialized");
+                return;
+            }
             const unsubscribe = onAuthStateChanged(auth, async (user: FirebaseUser | null) => {
                 unsubscribe();
                 if (user) {
                     const mappedUser: User = {
                         id: user.uid,
                         email: user.email || '',
-                        role: 'MANAGER', // Default, logic to fetch from DB can be added here
+                        role: 'MANAGER',
                         subscriptionTier: 'FREE',
-                        teamId: 'team-wts' // Default for now
+                        teamId: 'team-wts'
                     };
 
-                    // Sync with Firestore
                     try {
                         await createUserProfile(mappedUser);
                     } catch (e) {
