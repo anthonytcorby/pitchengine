@@ -2,19 +2,31 @@
 
 import { useOnboarding } from '@/hooks/use-onboarding';
 import { OnboardingSteps } from '@/components/onboarding/onboarding-steps';
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, Suspense } from 'react';
 
-export default function OnboardingPage() {
-    const { state, setRole, updateData, nextStep, prevStep, setStep, completeOnboarding } = useOnboarding();
+function OnboardingContent() {
+    const { state, setRole, updateData, nextStep, prevStep, setStep, completeOnboarding, resetOnboarding } = useOnboarding();
     const router = useRouter();
 
-    // Check completion
+    const searchParams = useSearchParams();
+    const mode = searchParams.get('mode');
+
+    // Reset onboarding if mode=create
     useEffect(() => {
-        if (state.completed) {
+        if (mode === 'create') {
+            resetOnboarding();
+        }
+    }, [mode, resetOnboarding]);
+
+    // Check completion (only if NOT in create mode or after reset)
+    useEffect(() => {
+        // If we are in create mode, we shouldn't redirect even if state says completed 
+        // (though resetOnboarding should handle this, the React state update might lag slightly)
+        if (state.completed && mode !== 'create') {
             router.push('/dashboard');
         }
-    }, [state.completed, router]);
+    }, [state.completed, router, mode]);
 
     return (
         <OnboardingSteps
@@ -28,5 +40,13 @@ export default function OnboardingPage() {
             onFinish={completeOnboarding}
             onSetStep={setStep}
         />
+    );
+}
+
+export default function OnboardingPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen bg-black" />}>
+            <OnboardingContent />
+        </Suspense>
     );
 }

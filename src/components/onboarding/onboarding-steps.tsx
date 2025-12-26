@@ -6,6 +6,7 @@ import { OnboardingData, OnboardingRole } from '@/hooks/use-onboarding';
 import { motion, AnimatePresence } from 'framer-motion';
 import { TacticsBoard } from '@/components/dashboard/tactics-board';
 import { api } from '@/services/api';
+import { CreateClubScreen } from './screens/create-club-screen';
 
 interface OnboardingStepsProps {
     currentStep: number;
@@ -141,73 +142,7 @@ export function OnboardingSteps({ currentStep, role, data, onSetRole, onUpdate, 
         );
     };
 
-    // --- SCREEN M3: CREATE CLUB ---
-    const ScreenCreateClub = () => {
-        const teamSizes = [5, 6, 7, 11];
-        const canContinue = data.clubName.length > 2 && data.location.length > 0;
 
-        return (
-            <div className="w-full max-w-lg mx-auto">
-                <div className="mb-8 text-center">
-                    <h2 className="text-3xl font-display font-bold italic uppercase tracking-tighter text-white mb-2">
-                        Create Your Club
-                    </h2>
-                    <p className="text-gray-500 text-sm">Vital details for your dashboard.</p>
-                </div>
-
-                <div className="space-y-6 mb-10">
-                    <div className="space-y-2">
-                        <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">Club Name</label>
-                        <input
-                            type="text"
-                            value={data.clubName}
-                            onChange={(e) => onUpdate({ clubName: e.target.value })}
-                            placeholder="e.g. AFC Work The Space"
-                            className="w-full bg-black/50 border border-white/10 focus:border-wts-green rounded-xl px-4 py-3 text-white placeholder-gray-700 outline-none transition-colors font-bold uppercase tracking-wide"
-                            autoFocus
-                        />
-                    </div>
-
-                    <div className="space-y-2">
-                        <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">Team Format</label>
-                        <div className="grid grid-cols-4 gap-2">
-                            {teamSizes.map(size => (
-                                <button
-                                    key={size}
-                                    onClick={() => onUpdate({ teamSize: size as any })}
-                                    className={`py-3 rounded-lg border font-bold font-mono transition-all ${data.teamSize === size
-                                            ? 'bg-wts-green text-black border-wts-green'
-                                            : 'bg-black/30 text-gray-400 border-white/10 hover:border-white/30'
-                                        }`}
-                                >
-                                    {size}-a-side
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
-                    <div className="space-y-2">
-                        <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">Home Area</label>
-                        <input
-                            type="text"
-                            value={data.location}
-                            onChange={(e) => onUpdate({ location: e.target.value })}
-                            placeholder="e.g. London, UK"
-                            className="w-full bg-black/50 border border-white/10 focus:border-wts-green rounded-xl px-4 py-3 text-white placeholder-gray-700 outline-none transition-colors font-bold uppercase tracking-wide"
-                        />
-                    </div>
-                </div>
-
-                <button
-                    onClick={onNext}
-                    disabled={!canContinue}
-                    className="w-full py-4 bg-wts-green disabled:bg-gray-800 disabled:text-gray-600 disabled:cursor-not-allowed text-black font-bold uppercase tracking-widest rounded-xl transition-all"
-                >
-                    Create Club
-                </button>
-            </div>
-        );
-    };
 
     // --- SCREEN M4: ADD PLAYERS ---
     const ScreenAddPlayers = () => {
@@ -713,7 +648,13 @@ export function OnboardingSteps({ currentStep, role, data, onSetRole, onUpdate, 
                     <motion.div key={`manager-${currentStep}`} initial="initial" animate="animate" exit="exit" variants={pageVariants} className="min-h-[60vh] flex flex-col justify-center py-10">
                         {currentStep === 1 && <ScreenManagerValue />}
                         {currentStep === 2 && <ScreenManagerScope />}
-                        {currentStep === 3 && <ScreenCreateClub />}
+                        {currentStep === 3 && (
+                            <CreateClubScreen
+                                data={data}
+                                onUpdate={onUpdate}
+                                onNext={onNext}
+                            />
+                        )}
                         {currentStep === 4 && <ScreenAddPlayers />}
                         {currentStep === 5 && <ScreenMatchDefaults />}
                         {currentStep === 6 && <ScreenTacticsPreview />}

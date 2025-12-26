@@ -48,7 +48,7 @@ export function Navbar() {
                         >
                             {t('common.login')}
                         </Link>
-                        <Link href="/dashboard">
+                        <Link href="/onboarding?mode=create">
                             <Button variant="secondary" size="sm" className="skew-x-[-10deg]">
                                 <span className="skew-x-[10deg]">{t('landing.nav.start_club').toUpperCase()}</span>
                             </Button>
@@ -86,7 +86,7 @@ export function Navbar() {
                     >
                         {t('common.login').toUpperCase()}
                     </Link>
-                    <Link href="/dashboard" className="w-full">
+                    <Link href="/onboarding?mode=create" className="w-full">
                         <Button
                             size="lg"
                             className="w-full skew-x-[-10deg] mt-4"
