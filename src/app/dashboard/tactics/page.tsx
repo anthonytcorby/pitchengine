@@ -445,8 +445,8 @@ export default function TacticsPage() {
                         <div className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-3xl p-5 flex flex-col gap-3">
                             <div className="flex items-center justify-between items-end">
                                 <div>
-                                    <span className="text-wts-green text-[10px] font-bold tracking-[0.3em] uppercase block mb-1.5 font-mono">BENCH</span>
-                                    <h3 className="text-2xl md:text-3xl font-display font-bold italic uppercase tracking-tighter text-white leading-none">SUBSTITUTES</h3>
+                                    <span className="text-wts-green text-sm font-bold tracking-[0.3em] uppercase block mb-1.5 font-mono">BENCH</span>
+                                    <h3 className="text-4xl md:text-5xl font-display font-bold italic uppercase tracking-tighter text-white leading-none">SUBSTITUTES</h3>
                                 </div>
                                 <span className="text-[10px] bg-white/5 px-2 py-0.5 rounded text-gray-400 mb-1">Max {teamSize === 11 ? 7 : 3}</span>
                             </div>
@@ -492,8 +492,8 @@ export default function TacticsPage() {
                         {teamSize === 11 && (
                             <div className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-3xl p-5 flex flex-col gap-3">
                                 <div>
-                                    <span className="text-wts-green text-[10px] font-bold tracking-[0.3em] uppercase block mb-1.5 font-mono">ASSIGNMENTS</span>
-                                    <h3 className="text-2xl md:text-3xl font-display font-bold italic uppercase tracking-tighter text-white leading-none">SET PIECES</h3>
+                                    <span className="text-wts-green text-sm font-bold tracking-[0.3em] uppercase block mb-1.5 font-mono">ASSIGNMENTS</span>
+                                    <h3 className="text-4xl md:text-5xl font-display font-bold italic uppercase tracking-tighter text-white leading-none">SET PIECES</h3>
                                 </div>
                                 <div className="space-y-2">
                                     {[
@@ -530,8 +530,8 @@ export default function TacticsPage() {
                         {/* Penalties */}
                         <div className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-3xl p-5 flex flex-col gap-3">
                             <div>
-                                <span className="text-wts-green text-[10px] font-bold tracking-[0.3em] uppercase block mb-1.5 font-mono">SHOOTOUT</span>
-                                <h3 className="text-2xl md:text-3xl font-display font-bold italic uppercase tracking-tighter text-white leading-none">PENALTIES</h3>
+                                <span className="text-wts-green text-sm font-bold tracking-[0.3em] uppercase block mb-1.5 font-mono">SHOOTOUT</span>
+                                <h3 className="text-4xl md:text-5xl font-display font-bold italic uppercase tracking-tighter text-white leading-none">PENALTIES</h3>
                             </div>
                             <div className="space-y-2">
                                 {[1, 2, 3].map((order) => {
