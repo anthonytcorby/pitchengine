@@ -38,10 +38,7 @@ export default function DashboardLayout({
         }
     };
     loadData();
-    // ...
 }, [router]);
-
-// ...
 
 if (isLoading) {
     return (
