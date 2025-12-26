@@ -1,6 +1,6 @@
 import { User, Team, Player, Fixture, Availability, Fee, Tactic, AuditLog, Notification } from '../types/schema';
 import { TEAMSHEET, MATCH_DATA } from '../lib/mock-data';
-import { auth } from '@/lib/firebase';
+import { auth, INTERNAL_TEST_MODE } from '@/lib/firebase';
 import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
 import { createUserProfile, getUserTeams, createTeam, getTeamMatches, setAvailability } from '@/lib/db';
 
