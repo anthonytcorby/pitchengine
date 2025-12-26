@@ -45,6 +45,35 @@ export default function DashboardLayout({
         loadData();
     }, [router]);
 
+    // Helper to get initials
+    const getInitials = (email: string) => {
+        return "AC";
+    };
+
+    const menuGroups = [
+        [
+            { icon: Home, label: t('nav.dashboard'), href: '/dashboard' }
+        ],
+        [
+            { icon: Tv, label: t('nav.matchday'), href: '/dashboard/matchday' },
+            { icon: Users, label: t('nav.squad'), href: '/dashboard/squad' },
+            { icon: ClipboardList, label: t('nav.tactics'), href: '/dashboard/tactics' },
+        ],
+        [
+            { icon: Calendar, label: t('nav.fixtures'), href: '/dashboard/fixtures' },
+            { icon: Table, label: t('nav.leagues'), href: '/dashboard/leagues' },
+        ],
+        [
+            { icon: Wallet, label: t('nav.fees'), href: '/dashboard/fees' },
+            { icon: MessageSquare, label: t('nav.comms'), href: '/dashboard/comms' },
+        ],
+        [
+            { icon: Globe, label: t('nav.find_league'), href: '/dashboard/find-league' },
+            { icon: UserPlus, label: t('nav.transfer_market'), href: '/dashboard/transfer-market' },
+            { icon: Star, label: t('nav.goal_week'), href: '/dashboard/goal-of-week' },
+        ]
+    ];
+
     if (isLoading) {
         return (
             <div className="flex h-screen w-full items-center justify-center bg-[#050D05]">
