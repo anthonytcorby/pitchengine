@@ -49,7 +49,7 @@ export default function SettingsPage() {
             {/* Page Header */}
             <div className="flex items-center justify-between">
                 <div>
-                    <span className="text-wts-green text-xs font-bold tracking-[0.3em] uppercase block mb-1.5 font-mono">
+                    <span className="text-wts-green text-sm font-bold tracking-[0.3em] uppercase block mb-1.5 font-mono">
                         {t('settings.subtitle')}
                     </span>
                     <h2 className="text-4xl md:text-5xl font-display font-bold italic uppercase tracking-tighter text-white">

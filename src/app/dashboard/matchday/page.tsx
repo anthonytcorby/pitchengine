@@ -193,14 +193,15 @@ export default function MatchdayPage() {
                     {/* Header / Hero */}
                     <div className="p-6 bg-black/40 backdrop-blur-md border border-white/10 rounded-3xl flex flex-col md:flex-row items-center justify-between">
                         <div className="flex items-center space-x-4 mb-4 md:mb-0">
-                            <div className="w-12 h-12 bg-wts-green flex items-center justify-center rounded-xl text-black font-bold">
+                            <div className="w-12 h-12 bg-wts-green flex items-center justify-center rounded-xl text-black font-bold shrink-0">
                                 VS
                             </div>
                             <div>
-                                <h1 className="text-2xl font-display font-bold italic text-white uppercase tracking-tighter">
+                                <span className="text-wts-green text-sm font-bold tracking-[0.3em] uppercase block mb-0.5 font-mono">NEXT FIXTURE</span>
+                                <h1 className="text-4xl md:text-5xl font-display font-bold italic text-white uppercase tracking-tighter leading-none">
                                     Match Day Live
                                 </h1>
-                                <div className="flex items-center space-x-3 text-xs font-bold text-gray-400 uppercase tracking-widest">
+                                <div className="flex items-center space-x-3 text-xs font-bold text-gray-400 uppercase tracking-widest mt-1">
                                     <span className="flex items-center space-x-1"><Calendar size={12} /><span>{MATCH_DATA.date}</span></span>
                                     <span className="flex items-center space-x-1"><MapPin size={12} /><span>{MATCH_DATA.venue}</span></span>
                                 </div>

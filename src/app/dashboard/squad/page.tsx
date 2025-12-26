@@ -353,10 +353,10 @@ export default function SquadPage() {
             {/* Page Header */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-3">
                 <div>
-                    <span className="text-wts-green text-xs font-bold tracking-[0.3em] uppercase block mb-1.5 font-mono">
+                    <span className="text-wts-green text-sm font-bold tracking-[0.3em] uppercase block mb-1.5 font-mono">
                         SQUAD MANAGEMENT
                     </span>
-                    <h2 className="text-3xl md:text-4xl font-display font-bold italic uppercase tracking-tighter text-white">
+                    <h2 className="text-4xl md:text-5xl font-display font-bold italic uppercase tracking-tighter text-white">
                         PLAYER ROSTER
                     </h2>
                 </div>
