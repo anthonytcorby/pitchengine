@@ -22,7 +22,7 @@ export function TacticsTable({ squad, lineup, subs }: TacticsTableProps) {
                     <Users size={20} className="text-wts-green" />
                 </div>
                 <div>
-                    <h3 className="text-lg font-bold text-white uppercase tracking-widest">Squad</h3>
+                    <h3 className="text-sm font-bold text-white uppercase tracking-widest">Squad</h3>
                 </div>
             </div>
 
