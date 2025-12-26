@@ -1,0 +1,41 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // User Profiles
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Teams
+    // Read: Members or Owner
+    // Write: Owner only
+    match /teams/{teamId} {
+      allow create: if request.auth != null;
+      allow read: if request.auth != null && (
+        resource.data.managerId == request.auth.uid ||
+        exists(/databases/$(database)/documents/teamMembers/$(teamId + "_" + request.auth.uid))
+      );
+      allow update, delete: if request.auth != null && resource.data.managerId == request.auth.uid;
+    }
+    
+    // Team Members
+    // Format ID as teamId_userId to make existence check easy in rules
+    match /teamMembers/{memberId} {
+      allow read: if request.auth != null; // Simpler for now, or restrict to team mates
+      allow write: if request.auth != null; // Ideally restrict to team admin or self-join logic
+    }
+    
+    // Matches
+    match /matches/{matchId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null; // Improve restriction to team owner
+    }
+    
+    // Availability
+    match /availability/{availId} {
+        allow read: if request.auth != null;
+        allow write: if request.auth != null && request.auth.uid == request.resource.data.userId;
+    }
+  }
+}
