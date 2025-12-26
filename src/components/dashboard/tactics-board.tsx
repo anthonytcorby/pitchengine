@@ -269,10 +269,10 @@ export function TacticsBoard({ formation, lineup, squad, onDrop, onNodeClick, on
                                         </div>
 
                                         {/* Player Name Tag */}
-                                        <div className="absolute -bottom-10 whitespace-nowrap px-3 py-1.5 bg-black/90 backdrop-blur-xl rounded-md border border-white/10 shadow-2xl pointer-events-none flex flex-col items-center z-[100] scale-90 transition-transform origin-top">
-                                            <div className="flex items-center space-x-1.5 mb-0.5">
+                                        <div className="absolute -bottom-8 whitespace-nowrap px-2 py-1 bg-black/90 backdrop-blur-xl rounded border border-white/10 shadow-2xl pointer-events-none flex flex-col items-center z-[100] scale-90 transition-transform origin-top">
+                                            <div className="flex items-center space-x-1 mb-0.5">
                                                 {player.nationality && (
-                                                    <div className="relative w-3.5 h-2.5 rounded-[1px] overflow-hidden opacity-80">
+                                                    <div className="relative w-3 h-2 rounded-[1px] overflow-hidden opacity-80">
                                                         <Image
                                                             src={`https://flagcdn.com/w20/${player.nationality}.png`}
                                                             alt={player.nationality}
@@ -282,11 +282,11 @@ export function TacticsBoard({ formation, lineup, squad, onDrop, onNodeClick, on
                                                         />
                                                     </div>
                                                 )}
-                                                <span className="text-xs font-black text-white uppercase tracking-[0.1em] leading-none">
+                                                <span className="text-[10px] font-black text-white uppercase tracking-[0.1em] leading-none max-w-[80px] truncate">
                                                     {displayNames[player.id]}
                                                 </span>
                                             </div>
-                                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none">{pos.role}</span>
+                                            <span className="text-[8px] font-bold text-gray-400 uppercase tracking-widest leading-none">{pos.role}</span>
                                         </div>
                                     </>
                                 ) : (
