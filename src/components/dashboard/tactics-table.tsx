@@ -17,9 +17,13 @@ export function TacticsTable({ squad, lineup, subs }: TacticsTableProps) {
 
     return (
         <div className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-3xl p-6 shadow-2xl h-full flex flex-col overflow-hidden">
-            <div className="mb-6">
-                <span className="text-wts-green text-sm font-bold tracking-[0.3em] uppercase block mb-1.5 font-mono">SELECTION</span>
-                <h3 className="text-4xl md:text-5xl font-display font-bold italic uppercase tracking-tighter text-white leading-none">SQUAD</h3>
+            <div className="flex items-center space-x-3 mb-6">
+                <div className="p-2.5 bg-wts-green/10 rounded-lg">
+                    <Users size={20} className="text-wts-green" />
+                </div>
+                <div>
+                    <h3 className="text-lg font-bold text-white uppercase tracking-widest">Squad</h3>
+                </div>
             </div>
 
             <div className="flex-1 overflow-y-auto no-scrollbar">
