@@ -186,7 +186,7 @@ export function Hero() {
 
                     {/* Buttons */}
                     <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-4">
-                        <Link href="/onboarding?mode=create" className="contents">
+                        <Link href="/login?mode=create" className="contents">
                             <Button size="lg" className="skew-x-[-10deg] px-10">
                                 <span className="skew-x-[10deg]">CREATE TEAM</span>
                             </Button>

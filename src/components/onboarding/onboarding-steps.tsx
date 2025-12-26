@@ -8,6 +8,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { TacticsBoard } from '@/components/dashboard/tactics-board';
 import { api } from '@/services/api';
 import { CreateClubScreen } from './screens/create-club-screen';
+import { ManagerNameScreen } from './screens/manager-name-screen';
+import { MatchDefaultsScreen } from './screens/match-defaults-screen';
 import { LanguageSelectionScreen } from './screens/language-selection-screen';
 import { TacticsPreviewScreen } from './screens/tactics-preview-screen';
 
@@ -237,65 +239,7 @@ export function OnboardingSteps({ currentStep, role, data, onSetRole, onUpdate, 
         );
     };
 
-    // --- SCREEN M5: MATCH DEFAULTS ---
-    const ScreenMatchDefaults = () => {
-        return (
-            <div className="w-full max-w-lg mx-auto">
-                <div className="mb-8 text-center">
-                    <h2 className="text-3xl font-display font-bold italic uppercase tracking-tighter text-white mb-2">
-                        {t('onboarding.match_defaults_title')}
-                    </h2>
-                    <p className="text-gray-500 text-sm">{t('onboarding.match_defaults_subtitle')}</p>
-                </div>
 
-                <div className="space-y-6 mb-10">
-                    <div className="space-y-2">
-                        <label className="text-xs font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                            <PoundSterling size={12} /> {t('onboarding.default_fee_label')}
-                        </label>
-                        <input
-                            type="number"
-                            value={data.defaultFee}
-                            onChange={(e) => onUpdate({ defaultFee: parseFloat(e.target.value) })}
-                            className="w-full bg-black/50 border border-white/10 focus:border-wts-green rounded-xl px-4 py-3 text-white placeholder-gray-700 outline-none transition-colors font-bold font-mono tracking-wide"
-                        />
-                    </div>
-
-                    <div className="space-y-2">
-                        <label className="text-xs font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                            <Clock size={12} /> {t('onboarding.kickoff_label')}
-                        </label>
-                        <input
-                            type="time"
-                            value={data.kickoffTime}
-                            onChange={(e) => onUpdate({ kickoffTime: e.target.value })}
-                            className="w-full bg-black/50 border border-white/10 focus:border-wts-green rounded-xl px-4 py-3 text-white placeholder-gray-700 outline-none transition-colors font-bold font-mono tracking-wide"
-                        />
-                    </div>
-
-                    <div className="space-y-2">
-                        <label className="text-xs font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                            <MapPin size={12} /> {t('onboarding.venue_label')}
-                        </label>
-                        <input
-                            type="text"
-                            value={data.venue}
-                            onChange={(e) => onUpdate({ venue: e.target.value })}
-                            placeholder="e.g. Powerleague Shoreditch"
-                            className="w-full bg-black/50 border border-white/10 focus:border-wts-green rounded-xl px-4 py-3 text-white placeholder-gray-700 outline-none transition-colors font-bold uppercase tracking-wide"
-                        />
-                    </div>
-                </div>
-
-                <button
-                    onClick={onNext}
-                    className="w-full py-4 bg-white/10 hover:bg-white/20 border border-white/10 text-white font-bold uppercase tracking-widest rounded-xl transition-all"
-                >
-                    {t('onboarding.continue_btn')}
-                </button>
-            </div>
-        );
-    };
 
 
 
@@ -353,8 +297,24 @@ export function OnboardingSteps({ currentStep, role, data, onSetRole, onUpdate, 
         const handleComplete = async () => {
             setIsSubmitting(true);
             try {
-                // Simulate Team Creation
-                onFinish();
+                // Add Manager as Captain if not already in the list
+                // We use a small delay to ensure the visual indicator (button state) is seen
+                await new Promise(resolve => setTimeout(resolve, 800));
+
+                const managerPlayer = {
+                    name: data.playerName,
+                    position: 'MID', // Default, could be 'MGR' if supported
+                    captain: true
+                };
+
+                // Add manager at the TOP of the list
+                const finalPlayers = [managerPlayer, ...data.players];
+                onUpdate({ players: finalPlayers });
+
+                // Allow state to propagate
+                setTimeout(() => {
+                    onFinish();
+                }, 100);
             } catch (e) {
                 console.error(e);
                 setIsSubmitting(false);
@@ -550,14 +510,14 @@ export function OnboardingSteps({ currentStep, role, data, onSetRole, onUpdate, 
                     <motion.div
                         className="h-full bg-wts-green shadow-[0_0_10px_rgba(0,255,65,0.5)]"
                         initial={{ width: 0 }}
-                        animate={{ width: `${(currentStep / (role === 'MANAGER' ? 9 : 5)) * 100}%` }}
+                        animate={{ width: `${(currentStep / (role === 'MANAGER' ? 10 : 5)) * 100}%` }}
                         transition={{ duration: 0.5 }}
                     />
                 </div>
             )}
 
             {/* Back Button */}
-            {currentStep > 0 && currentStep < (role === 'MANAGER' ? 9 : 5) && (
+            {currentStep > 0 && currentStep < (role === 'MANAGER' ? 10 : 5) && (
                 <button
                     onClick={onBack}
                     className="fixed top-8 left-8 text-gray-500 hover:text-white transition-colors z-40"
@@ -585,22 +545,35 @@ export function OnboardingSteps({ currentStep, role, data, onSetRole, onUpdate, 
                         {currentStep === 2 && <ScreenManagerValue />}
                         {currentStep === 3 && <ScreenManagerScope />}
                         {currentStep === 4 && (
+                            <ManagerNameScreen
+                                data={data}
+                                onUpdate={onUpdate}
+                                onNext={onNext}
+                            />
+                        )}
+                        {currentStep === 5 && (
                             <CreateClubScreen
                                 data={data}
                                 onUpdate={onUpdate}
                                 onNext={onNext}
                             />
                         )}
-                        {currentStep === 5 && <ScreenAddPlayers />}
-                        {currentStep === 6 && <ScreenMatchDefaults />}
+                        {currentStep === 6 && <ScreenAddPlayers />}
                         {currentStep === 7 && (
+                            <MatchDefaultsScreen
+                                data={data}
+                                onUpdate={onUpdate}
+                                onNext={onNext}
+                            />
+                        )}
+                        {currentStep === 8 && (
                             <TacticsPreviewScreen
                                 data={data}
                                 onNext={onNext}
                             />
                         )}
-                        {currentStep === 8 && <ScreenFeesClarity />}
-                        {currentStep === 9 && <ScreenManagerConfirmation />}
+                        {currentStep === 9 && <ScreenFeesClarity />}
+                        {currentStep === 10 && <ScreenManagerConfirmation />}
                     </motion.div>
                 )}
 

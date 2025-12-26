@@ -48,12 +48,12 @@ export function Navbar() {
                         >
                             {t('common.login')}
                         </Link>
-                        <Link href="/onboarding?mode=join">
+                        <Link href="/login?mode=join">
                             <Button variant="secondary" size="sm" className="skew-x-[-10deg]">
                                 <span className="skew-x-[10deg]">{t('landing.nav.join_player').toUpperCase()}</span>
                             </Button>
                         </Link>
-                        <Link href="/onboarding?mode=create">
+                        <Link href="/login?mode=create">
                             <Button variant="secondary" size="sm" className="skew-x-[-10deg] bg-wts-green text-black hover:bg-white border-none">
                                 <span className="skew-x-[10deg]">{t('landing.nav.start_club').toUpperCase()}</span>
                             </Button>
@@ -91,7 +91,7 @@ export function Navbar() {
                     >
                         {t('common.login').toUpperCase()}
                     </Link>
-                    <Link href="/onboarding?mode=create" className="w-full">
+                    <Link href="/login?mode=create" className="w-full">
                         <Button
                             size="lg"
                             className="w-full skew-x-[-10deg] mt-4"

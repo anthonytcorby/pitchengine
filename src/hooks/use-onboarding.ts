@@ -8,10 +8,11 @@ export interface OnboardingData {
     clubName: string;
     teamSize: TeamSize;
     location: string;
-    players: { name: string; position: string }[];
+    players: { name: string; position: string; captain?: boolean }[];
     defaultFee: number;
     kickoffTime: string;
     venue: string;
+    league: string;
     fixtureId?: string;
 
     // Player Data
@@ -39,6 +40,7 @@ const INITIAL_STATE: OnboardingState = {
         defaultFee: 5,
         kickoffTime: '19:00',
         venue: '',
+        league: '',
         // Player
         playerName: '',
         playerPosition: 'MID',

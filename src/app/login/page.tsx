@@ -6,16 +6,26 @@ import { Button } from '@/components/ui/button';
 import { Container } from '@/components/ui/container';
 import { Mail, ArrowLeft } from 'lucide-react';
 
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { signInWithGoogle, signInWithApple } from '@/lib/auth';
 
 export default function LoginPage() {
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const mode = searchParams.get('mode');
+
+    const handleSuccess = () => {
+        if (mode) {
+            router.push(`/onboarding?mode=${mode}`);
+        } else {
+            router.push('/dashboard');
+        }
+    };
 
     const handleGoogleLogin = async () => {
         try {
             await signInWithGoogle();
-            router.push('/dashboard');
+            handleSuccess();
         } catch (error) {
             console.error(error);
         }
@@ -24,7 +34,7 @@ export default function LoginPage() {
     const handleAppleLogin = async () => {
         try {
             await signInWithApple();
-            router.push('/dashboard');
+            handleSuccess();
         } catch (error) {
             console.error(error);
         }
@@ -66,14 +76,7 @@ export default function LoginPage() {
 
                         {/* Logo */}
                         <div className="flex flex-col items-center space-y-5 mb-12">
-                            <div className="relative w-24 h-24">
-                                <Image
-                                    src="/pitchengine-logo-v2.png"
-                                    alt="Pitch Engine Logo"
-                                    fill
-                                    className="object-contain"
-                                />
-                            </div>
+
                             <h1 className="font-outfit font-bold text-3xl tracking-widest text-white text-center uppercase">
                                 PITCH ENGINE
                             </h1>

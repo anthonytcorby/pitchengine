@@ -1,0 +1,21 @@
+export const UK_LEAGUES = [
+    "Premier League",
+    "EFL Championship",
+    "EFL League One",
+    "EFL League Two",
+    "National League",
+    "National League North",
+    "National League South",
+    "Scottish Premiership",
+    "Scottish Championship",
+    "Scottish League One",
+    "Scottish League Two",
+    "Cymru Premier",
+    "NIFL Premiership",
+    "Women's Super League",
+    "Women's Championship",
+    "Sunday League (Generic)",
+    "Powerleague",
+    "Goals",
+    "PlayFootball"
+];
