@@ -28,14 +28,25 @@ export default function MatchdayPage() {
     const [hasMatch, setHasMatch] = useState(true);
     const [squad, setSquad] = useState<Player[]>([]);
 
-    // Live Tactics Data
-    const [lineup] = useLocalStorage<Record<number, string>>('wts-tactics-lineup-v2', {});
-    const [subsMap] = useLocalStorage<Record<number, string>>('wts-tactics-subs-v2', {});
+    // UI State for toggle
+    const [possessionMode, setPossessionMode] = useState<'in' | 'out'>('in');
+
+    // Confirmed Data Source
+    const [confirmedSquad] = useLocalStorage<any>('wts-confirmed-squad', null);
     const [teamSizeStr] = useLocalStorage<string>('wts-team-size', '11');
     const teamSize = parseInt(teamSizeStr, 10);
 
-    const [selectedTactic] = useLocalStorage<string>('wts-tactics-formation-v2', '4-4-2 Standard');
-    const [customFormation] = useLocalStorage<any>('wts-tactics-custom-formation', null);
+    // Derived Data from Confirmed Squad
+    // If no confirmed squad, default to empty
+    const lineup = confirmedSquad?.lineup || {};
+    const subsMap = confirmedSquad?.subs || {};
+
+    // Determine active formation based on mode
+    // formationIn/Out were pre-calculated in TacticsPage, but we can also re-derive if needed.
+    // Let's use the pre-calculated ones if available, otherwise fallback.
+    const currentFormation = possessionMode === 'in'
+        ? (confirmedSquad?.formationIn || confirmedSquad?.formation) // Fallback to legacy single formation if old save
+        : (confirmedSquad?.formationOut || confirmedSquad?.formation);
 
     // Sharing State
     const [isSharing, setIsSharing] = useState(false);
@@ -51,12 +62,8 @@ export default function MatchdayPage() {
         loadData();
     }, []);
 
-    // Derived Data
+    // Derived Lists
     const isSquadSizeMismatch = Object.keys(lineup).length > teamSize;
-    const availableFormations = getFormationsForSize(teamSize);
-
-    // Fallback logic for formation
-    const currentFormation = customFormation || availableFormations[selectedTactic] || Object.values(availableFormations)[0];
 
     const startingXI = (!isSquadSizeMismatch)
         ? Object.entries(lineup).map(([index, playerId]) => {
@@ -66,12 +73,13 @@ export default function MatchdayPage() {
         : [];
 
     const subs = (!isSquadSizeMismatch)
-        ? Object.values(subsMap).map(playerId =>
-            squad.find(p => p.id === playerId)
-        ).filter(Boolean)
+        ? Object.values(subsMap).map(playerId => {
+            // subsMap values are strings (playerIds)
+            return squad.find(p => p.id === playerId as string)
+        }).filter(Boolean)
         : [];
 
-    const formationCoords = (!isSquadSizeMismatch) ? currentFormation : [];
+    const formationCoords = (!isSquadSizeMismatch && currentFormation) ? currentFormation : [];
     const lineupMap = (!isSquadSizeMismatch) ? lineup : {};
 
     // 1. Generate Image and Open Preview
@@ -136,7 +144,7 @@ export default function MatchdayPage() {
     return (
         <div className="space-y-6 max-w-[1400px] mx-auto min-h-[calc(100vh-140px)] relative">
 
-            {/* Hidden Graphic Generator */}
+            {/* Hidden Graphic Generator -- Uses current state */}
             <MatchdayGraphic
                 ref={graphicRef}
                 startingXI={startingXI}
@@ -247,7 +255,7 @@ export default function MatchdayPage() {
                                     ))}
                                     {startingXI.length === 0 && (
                                         <div className="p-8 text-center text-gray-500 text-xs uppercase tracking-widest">
-                                            No starting XI confirmed
+                                            {confirmedSquad ? "No starting XI confirmed" : "Draft not yet confirmed"}
                                         </div>
                                     )}
                                 </div>
@@ -286,6 +294,16 @@ export default function MatchdayPage() {
                                     lineup={lineupMap}
                                     squad={squad}
                                     teamSize={teamSize}
+                                    readonly={false} // Allow interactions? User asked for read-only before. But now they want toggle. 
+                                    // Actually, keep safe interactions but locked.
+                                    // TacticsBoard logic: if locked, you can't move nodes. 
+                                    // Let's keep it mostly read-only visual but enable the toggle via props.
+                                    // Passing 'readonly={true}' disables DnD and interactions. 
+                                    // Does readonly disable the toggle? 
+                                    // Check TacticsBoard: 'onTogglePossession' is rendered in Header which is rendered even if readonly?
+                                    // View file shows: Header is rendered. 
+                                    // But handleDragOver returns if readonly.
+                                    // So readonly is safe.
                                     readonly={true}
                                     onDrop={() => { }}
                                     onNodeClick={() => { }}
@@ -295,6 +313,8 @@ export default function MatchdayPage() {
                                     isLocked={true}
                                     onToggleLock={() => { }}
                                     onNodeMove={() => { }}
+                                    possessionMode={possessionMode}
+                                    onTogglePossession={setPossessionMode}
                                 />
                             </div>
                         </div>

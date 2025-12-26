@@ -180,8 +180,13 @@ export default function TacticsPage() {
         setConfirmedSquad({
             lineup,
             subs,
-            tactic: selectedTactic,
-            formation: customFormation || availableFormations[selectedTactic],
+            tacticIn,
+            tacticOut,
+            customIn,
+            customOut,
+            // Pre-calculate final formations for convenience, though MatchDay can also derive them
+            formationIn: customIn || availableFormations[tacticIn],
+            formationOut: customOut || availableFormations[tacticOut],
             updatedAt: new Date().toISOString()
         });
         setIsConfirmed(true);
