@@ -14,6 +14,10 @@ export default function DashboardLayout({
 }: {
     children: React.ReactNode;
 }) {
+    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+    const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+    const { t } = useLanguage();
+
     const [isLoading, setIsLoading] = useState(true);
     const router = useRouter();
 
