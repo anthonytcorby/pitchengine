@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { ArrowRight, ChevronLeft, Check, Trophy, Users, Calendar, Wallet, Plus, X, Lock, Play, Clock, MapPin, PoundSterling, Shirt, Search, Link as LinkIcon, Briefcase } from 'lucide-react';
 import { OnboardingData, OnboardingRole } from '@/hooks/use-onboarding';
+import { useLanguage } from '@/hooks/use-language';
 import { motion, AnimatePresence } from 'framer-motion';
 import { TacticsBoard } from '@/components/dashboard/tactics-board';
 import { api } from '@/services/api';
@@ -23,6 +24,7 @@ interface OnboardingStepsProps {
 }
 
 export function OnboardingSteps({ currentStep, role, data, onSetRole, onUpdate, onNext, onBack, onFinish, onSetStep }: OnboardingStepsProps) {
+    const { t } = useLanguage();
 
     // Animation Variants
     const pageVariants = {
@@ -39,7 +41,7 @@ export function OnboardingSteps({ currentStep, role, data, onSetRole, onUpdate, 
         <div className="w-full max-w-4xl mx-auto">
             <div className="text-center mb-12">
                 <h1 className="text-4xl md:text-5xl font-display font-bold italic uppercase tracking-tighter text-white mb-4">
-                    How will you use Pitch Engine?
+                    {t('onboarding.role_title')}
                 </h1>
             </div>
 
@@ -57,10 +59,10 @@ export function OnboardingSteps({ currentStep, role, data, onSetRole, onUpdate, 
                     </div>
                     <div>
                         <h2 className="text-2xl font-display font-bold italic uppercase tracking-tighter text-white mb-2 group-hover:text-wts-green transition-colors">
-                            I Manage A Team
+                            {t('onboarding.role_manager')}
                         </h2>
                         <p className="text-gray-500 text-sm leading-relaxed">
-                            Create a club, build your squad, set tactics, and track fees.
+                            {t('onboarding.role_manager_desc')}
                         </p>
                     </div>
                 </button>
@@ -78,10 +80,10 @@ export function OnboardingSteps({ currentStep, role, data, onSetRole, onUpdate, 
                     </div>
                     <div>
                         <h2 className="text-2xl font-display font-bold italic uppercase tracking-tighter text-white mb-2 group-hover:text-wts-green transition-colors">
-                            I Play For A Team
+                            {t('onboarding.role_player')}
                         </h2>
                         <p className="text-gray-500 text-sm leading-relaxed">
-                            Join your squad, see lineups, check fixtures, and pay fees.
+                            {t('onboarding.role_player_desc')}
                         </p>
                     </div>
                 </button>
@@ -97,17 +99,17 @@ export function OnboardingSteps({ currentStep, role, data, onSetRole, onUpdate, 
     const ScreenManagerValue = () => (
         <div className="text-center max-w-2xl mx-auto space-y-8">
             <h1 className="text-6xl md:text-7xl font-display font-bold italic uppercase tracking-tighter text-white leading-[0.9]">
-                Run Your Team <span className="text-wts-green">Properly</span>
+                {t('onboarding.manager_value_title')}
             </h1>
             <p className="text-xl text-gray-400 font-sans tracking-wide max-w-lg mx-auto">
-                Squads, tactics, fixtures, and fees. All in one place.
+                {t('onboarding.manager_value_desc')}
             </p>
             <div className="pt-8 flex flex-col items-center space-y-4">
                 <button
                     onClick={onNext}
                     className="group relative px-8 py-4 bg-wts-green text-black font-bold uppercase tracking-widest hover:bg-white transition-all rounded-xl text-sm flex items-center space-x-3"
                 >
-                    <span>Create Your Club</span>
+                    <span>{t('onboarding.create_club_btn')}</span>
                     <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
                 </button>
             </div>
@@ -117,19 +119,19 @@ export function OnboardingSteps({ currentStep, role, data, onSetRole, onUpdate, 
     // --- SCREEN M2: SCOPE ---
     const ScreenManagerScope = () => {
         const features = [
-            { icon: Users, label: "Squad Selection & Availability" },
-            { icon: Trophy, label: "Matchday Line Ups" },
-            { icon: Calendar, label: "Fixtures & Reminders" },
-            { icon: Wallet, label: "Fee Tracking & Payments" }
+            { icon: Users, label: t('onboarding.feature_squad') },
+            { icon: Trophy, label: t('onboarding.feature_lineups') },
+            { icon: Calendar, label: t('onboarding.feature_fixtures') },
+            { icon: Wallet, label: t('onboarding.feature_fees') }
         ];
 
         return (
             <div className="w-full max-w-lg mx-auto">
                 <div className="mb-10 text-center">
                     <h2 className="text-3xl font-display font-bold italic uppercase tracking-tighter text-white mb-2">
-                        Everything Handled
+                        {t('onboarding.manager_scope_title')}
                     </h2>
-                    <p className="text-gray-500 text-sm">We take care of the boring stuff.</p>
+                    <p className="text-gray-500 text-sm">{t('onboarding.manager_scope_desc')}</p>
                 </div>
 
                 <div className="grid gap-4 mb-10">
@@ -147,7 +149,7 @@ export function OnboardingSteps({ currentStep, role, data, onSetRole, onUpdate, 
                     onClick={onNext}
                     className="w-full py-4 bg-white/10 hover:bg-white/20 border border-white/10 text-white font-bold uppercase tracking-widest rounded-xl transition-all"
                 >
-                    Continue
+                    {t('onboarding.continue_btn')}
                 </button>
             </div>
         );
@@ -176,9 +178,9 @@ export function OnboardingSteps({ currentStep, role, data, onSetRole, onUpdate, 
             <div className="w-full max-w-lg mx-auto">
                 <div className="mb-8 text-center">
                     <h2 className="text-3xl font-display font-bold italic uppercase tracking-tighter text-white mb-2">
-                        Add Players
+                        {t('onboarding.add_players_title')}
                     </h2>
-                    <p className="text-gray-500 text-sm">Add players now or invite them later. You stay in control of the squad.</p>
+                    <p className="text-gray-500 text-sm">{t('onboarding.add_players_subtitle')}</p>
                 </div>
 
                 <div className="space-y-4 mb-8">
@@ -222,7 +224,7 @@ export function OnboardingSteps({ currentStep, role, data, onSetRole, onUpdate, 
                         onClick={onNext}
                         className="w-full py-4 bg-white/10 hover:bg-white/20 border border-white/10 text-white font-bold uppercase tracking-widest rounded-xl transition-all"
                     >
-                        Continue
+                        {t('onboarding.continue_btn')}
                     </button>
                     <button
                         onClick={onNext}
@@ -241,15 +243,15 @@ export function OnboardingSteps({ currentStep, role, data, onSetRole, onUpdate, 
             <div className="w-full max-w-lg mx-auto">
                 <div className="mb-8 text-center">
                     <h2 className="text-3xl font-display font-bold italic uppercase tracking-tighter text-white mb-2">
-                        Match Defaults
+                        {t('onboarding.match_defaults_title')}
                     </h2>
-                    <p className="text-gray-500 text-sm">These are defaults. You can change them anytime.</p>
+                    <p className="text-gray-500 text-sm">{t('onboarding.match_defaults_subtitle')}</p>
                 </div>
 
                 <div className="space-y-6 mb-10">
                     <div className="space-y-2">
                         <label className="text-xs font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                            <PoundSterling size={12} /> Default Match Fee
+                            <PoundSterling size={12} /> {t('onboarding.default_fee_label')}
                         </label>
                         <input
                             type="number"
@@ -261,7 +263,7 @@ export function OnboardingSteps({ currentStep, role, data, onSetRole, onUpdate, 
 
                     <div className="space-y-2">
                         <label className="text-xs font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                            <Clock size={12} /> Typical Kickoff
+                            <Clock size={12} /> {t('onboarding.kickoff_label')}
                         </label>
                         <input
                             type="time"
@@ -273,7 +275,7 @@ export function OnboardingSteps({ currentStep, role, data, onSetRole, onUpdate, 
 
                     <div className="space-y-2">
                         <label className="text-xs font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                            <MapPin size={12} /> Home Venue
+                            <MapPin size={12} /> {t('onboarding.venue_label')}
                         </label>
                         <input
                             type="text"
@@ -289,7 +291,7 @@ export function OnboardingSteps({ currentStep, role, data, onSetRole, onUpdate, 
                     onClick={onNext}
                     className="w-full py-4 bg-white/10 hover:bg-white/20 border border-white/10 text-white font-bold uppercase tracking-widest rounded-xl transition-all"
                 >
-                    Next
+                    {t('onboarding.continue_btn')}
                 </button>
             </div>
         );
@@ -303,9 +305,9 @@ export function OnboardingSteps({ currentStep, role, data, onSetRole, onUpdate, 
             <div className="w-full max-w-lg mx-auto">
                 <div className="mb-10 text-center">
                     <h2 className="text-3xl font-display font-bold italic uppercase tracking-tighter text-white mb-2">
-                        Get Paid on Time
+                        {t('onboarding.fees_clarity_title')}
                     </h2>
-                    <p className="text-gray-500 text-sm">Track who has paid. Automatically remind who has not.</p>
+                    <p className="text-gray-500 text-sm">{t('onboarding.fees_clarity_desc')}</p>
                 </div>
 
                 {/* Mini Visual Table */}
@@ -338,7 +340,7 @@ export function OnboardingSteps({ currentStep, role, data, onSetRole, onUpdate, 
                     onClick={onNext}
                     className="w-full py-4 bg-white/10 hover:bg-white/20 border border-white/10 text-white font-bold uppercase tracking-widest rounded-xl transition-all"
                 >
-                    Finish Setup
+                    {t('onboarding.finish_setup_btn')}
                 </button>
             </div>
         );
@@ -367,10 +369,10 @@ export function OnboardingSteps({ currentStep, role, data, onSetRole, onUpdate, 
 
                 <div>
                     <h1 className="text-5xl md:text-6xl font-display font-bold italic uppercase tracking-tighter text-white mb-4">
-                        You Are The Gaffer Now
+                        {t('onboarding.manager_confirmation_title')}
                     </h1>
                     <p className="text-gray-400 text-lg">
-                        Your club is live. Add your first fixture to get started.
+                        {t('onboarding.manager_confirmation_desc')}
                     </p>
                 </div>
 
@@ -380,13 +382,13 @@ export function OnboardingSteps({ currentStep, role, data, onSetRole, onUpdate, 
                         disabled={isSubmitting}
                         className="w-full py-5 bg-wts-green text-black font-bold uppercase tracking-widest text-sm rounded-xl hover:bg-white transition-all shadow-[0_0_20px_rgba(0,255,65,0.3)] disabled:opacity-50"
                     >
-                        {isSubmitting ? 'Finalizing...' : 'Add First Fixture'}
+                        {isSubmitting ? 'Finalizing...' : t('onboarding.add_first_fixture_btn')}
                     </button>
                     <button
                         onClick={handleComplete}
                         className="text-xs font-bold text-gray-500 hover:text-white uppercase tracking-widest transition-colors"
                     >
-                        Go to Dashboard
+                        {t('onboarding.go_to_dashboard_btn')}
                     </button>
                 </div>
             </div>
@@ -401,17 +403,17 @@ export function OnboardingSteps({ currentStep, role, data, onSetRole, onUpdate, 
     const ScreenPlayerValue = () => (
         <div className="text-center max-w-2xl mx-auto space-y-8">
             <h1 className="text-6xl md:text-7xl font-display font-bold italic uppercase tracking-tighter text-white leading-[0.9]">
-                Stay In The <span className="text-wts-green">Loop</span>
+                {t('onboarding.player_value_title')}
             </h1>
             <p className="text-xl text-gray-400 font-sans tracking-wide max-w-lg mx-auto">
-                Fixtures, line ups, fees, and team updates. No WhatsApp chaos.
+                {t('onboarding.player_value_desc')}
             </p>
             <div className="pt-8 flex flex-col items-center space-y-4">
                 <button
                     onClick={onNext}
                     className="group relative px-8 py-4 bg-wts-green text-black font-bold uppercase tracking-widest hover:bg-white transition-all rounded-xl text-sm flex items-center space-x-3"
                 >
-                    <span>Find Your Team</span>
+                    <span>{t('onboarding.find_team_btn')}</span>
                     <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
                 </button>
             </div>
@@ -423,7 +425,7 @@ export function OnboardingSteps({ currentStep, role, data, onSetRole, onUpdate, 
         <div className="w-full max-w-lg mx-auto">
             <div className="mb-10 text-center">
                 <h2 className="text-3xl font-display font-bold italic uppercase tracking-tighter text-white mb-2">
-                    Join A Team
+                    {t('onboarding.join_team_title')}
                 </h2>
             </div>
 
@@ -433,8 +435,8 @@ export function OnboardingSteps({ currentStep, role, data, onSetRole, onUpdate, 
                         <LinkIcon size={20} />
                     </div>
                     <div className="text-left">
-                        <span className="block text-white font-bold uppercase tracking-wide">Join via Invite Link</span>
-                        <span className="text-xs text-gray-500">Have a code from your manager?</span>
+                        <span className="block text-white font-bold uppercase tracking-wide">{t('onboarding.join_via_link')}</span>
+                        <span className="text-xs text-gray-500">{t('onboarding.join_via_link_desc')}</span>
                     </div>
                 </button>
 
@@ -443,8 +445,8 @@ export function OnboardingSteps({ currentStep, role, data, onSetRole, onUpdate, 
                         <Search size={20} />
                     </div>
                     <div className="text-left">
-                        <span className="block text-white font-bold uppercase tracking-wide">Search For A Team</span>
-                        <span className="text-xs text-gray-500">Find your club by name</span>
+                        <span className="block text-white font-bold uppercase tracking-wide">{t('onboarding.search_team')}</span>
+                        <span className="text-xs text-gray-500">{t('onboarding.search_team_desc')}</span>
                     </div>
                 </button>
             </div>
@@ -453,7 +455,7 @@ export function OnboardingSteps({ currentStep, role, data, onSetRole, onUpdate, 
                 onClick={onNext}
                 className="w-full mt-8 py-4 bg-white/10 hover:bg-white/20 border border-white/10 text-white font-bold uppercase tracking-widest rounded-xl transition-all"
             >
-                Continue
+                {t('onboarding.continue_btn')}
             </button>
         </div>
     );
@@ -463,14 +465,14 @@ export function OnboardingSteps({ currentStep, role, data, onSetRole, onUpdate, 
         <div className="w-full max-w-lg mx-auto">
             <div className="mb-8 text-center">
                 <h2 className="text-3xl font-display font-bold italic uppercase tracking-tighter text-white mb-2">
-                    Player Profile
+                    {t('onboarding.player_profile_title')}
                 </h2>
-                <p className="text-gray-500 text-sm">Minimal setup. Get straight to it.</p>
+                <p className="text-gray-500 text-sm">{t('onboarding.player_profile_desc')}</p>
             </div>
 
             <div className="space-y-6 mb-10">
                 <div className="space-y-2">
-                    <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">Your Name</label>
+                    <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">{t('onboarding.your_name_label')}</label>
                     <input
                         type="text"
                         value={data.playerName}
@@ -482,7 +484,7 @@ export function OnboardingSteps({ currentStep, role, data, onSetRole, onUpdate, 
                 </div>
 
                 <div className="space-y-2">
-                    <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">Preferred Position</label>
+                    <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">{t('onboarding.preferred_position_label')}</label>
                     <select
                         value={data.playerPosition}
                         onChange={(e) => onUpdate({ playerPosition: e.target.value })}
@@ -501,7 +503,7 @@ export function OnboardingSteps({ currentStep, role, data, onSetRole, onUpdate, 
                 disabled={data.playerName.length < 2}
                 className="w-full py-4 bg-wts-green disabled:bg-gray-800 disabled:text-gray-600 disabled:cursor-not-allowed text-black font-bold uppercase tracking-widest rounded-xl transition-all"
             >
-                Continue
+                {t('onboarding.continue_btn')}
             </button>
         </div>
     );
@@ -520,10 +522,10 @@ export function OnboardingSteps({ currentStep, role, data, onSetRole, onUpdate, 
 
                 <div>
                     <h1 className="text-5xl md:text-6xl font-display font-bold italic uppercase tracking-tighter text-white mb-4">
-                        You Are In
+                        {t('onboarding.player_confirmation_title')}
                     </h1>
                     <p className="text-gray-400 text-lg">
-                        You will see fixtures, line ups, and fees here.
+                        {t('onboarding.player_confirmation_desc')}
                     </p>
                 </div>
 
@@ -532,7 +534,7 @@ export function OnboardingSteps({ currentStep, role, data, onSetRole, onUpdate, 
                         onClick={handleComplete}
                         className="w-full py-5 bg-wts-green text-black font-bold uppercase tracking-widest text-sm rounded-xl hover:bg-white transition-all shadow-[0_0_20px_rgba(0,255,65,0.3)]"
                     >
-                        Go To Matchday
+                        {t('onboarding.go_to_matchday_btn')}
                     </button>
                 </div>
             </div>

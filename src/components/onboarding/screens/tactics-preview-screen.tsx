@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { OnboardingData } from '@/hooks/use-onboarding';
+import { useLanguage } from '@/hooks/use-language';
 import { TacticsBoard } from '@/components/dashboard/tactics-board';
 import { Lock, Users, Trophy } from 'lucide-react';
 import { DEMO_TACTICS } from '@/data/demo-tactics';
@@ -12,6 +13,7 @@ interface TacticsPreviewScreenProps {
 }
 
 export function TacticsPreviewScreen({ data, onNext }: TacticsPreviewScreenProps) {
+    const { t } = useLanguage();
     const [possessionMode, setPossessionMode] = useState<'in' | 'out'>('in');
 
     // Mock squad for preview
@@ -44,10 +46,10 @@ export function TacticsPreviewScreen({ data, onNext }: TacticsPreviewScreenProps
             <div className="flex-1 space-y-8 order-2 md:order-1">
                 <div>
                     <h2 className="text-3xl font-display font-bold italic uppercase tracking-tighter text-white mb-4">
-                        Your Tactics Board
+                        {t('onboarding.tactics_title')}
                     </h2>
                     <p className="text-gray-400 text-sm leading-relaxed mb-6">
-                        This is your digital whiteboard. Drag and drop players. Adjust formations. Lock it in before kick-off.
+                        {t('onboarding.tactics_desc')}
                     </p>
 
                     <div className="space-y-4">
@@ -70,7 +72,7 @@ export function TacticsPreviewScreen({ data, onNext }: TacticsPreviewScreenProps
                     onClick={onNext}
                     className="w-full md:w-auto px-8 py-4 bg-wts-green text-black font-bold uppercase tracking-widest rounded-xl hover:bg-white transition-all shadow-[0_0_20px_rgba(0,255,65,0.4)]"
                 >
-                    Save and Continue
+                    {t('onboarding.save_continue_btn')}
                 </button>
             </div>
 
