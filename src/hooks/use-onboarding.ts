@@ -52,8 +52,7 @@ export function useOnboarding() {
     const setRole = (role: OnboardingRole) => {
         setState((prev) => ({
             ...prev,
-            role,
-            step: 1 // Move to Step 1 of that role's flow
+            role
         }));
     };
 
