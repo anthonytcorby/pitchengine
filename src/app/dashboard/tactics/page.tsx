@@ -28,36 +28,30 @@ export default function TacticsPage() {
     const [possessionMode, setPossessionMode] = useState<'in' | 'out'>('in');
     const isIn = possessionMode === 'in';
 
-    // --- STORAGE HOOKS (Paired) ---
+    // --- SHARED SQUAD STATE (Same players, same bench) ---
+    const [lineup, setLineup] = useLocalStorage<Record<number, string>>('wts-tactics-lineup-v2', {});
+    const [subs, setSubs] = useLocalStorage<Record<number, string>>('wts-tactics-subs-v2', {});
+    const [setPieces, setSetPieces] = useLocalStorage<Record<string, string>>('wts-tactics-set-pieces-v2', {});
+    const [penalties, setPenalties] = useLocalStorage<Record<number, string>>('wts-tactics-penalties-v2', {});
+
+    // --- INDEPENDENT FORMATION STATE (Different shapes) ---
     // In Possession
-    const [lineupIn, setLineupIn] = useLocalStorage<Record<number, string>>('wts-tactics-lineup-in', {});
     const [tacticIn, setTacticIn] = useLocalStorage<string>('wts-tactics-formation-in', Object.keys(availableFormations)[0]);
     const [customIn, setCustomIn] = useLocalStorage<FormationPos[] | null>('wts-tactics-custom-in', null);
 
     // Out Possession
-    const [lineupOut, setLineupOut] = useLocalStorage<Record<number, string>>('wts-tactics-lineup-out', {});
     const [tacticOut, setTacticOut] = useLocalStorage<string>('wts-tactics-formation-out', Object.keys(availableFormations)[0]);
     const [customOut, setCustomOut] = useLocalStorage<FormationPos[] | null>('wts-tactics-custom-out', null);
 
     // Dynamic Getters/Setters based on Mode
-    const lineup = isIn ? lineupIn : lineupOut;
-    const setLineup = isIn ? setLineupIn : setLineupOut;
-
     const selectedTactic = isIn ? tacticIn : tacticOut;
     const setSelectedTactic = isIn ? setTacticIn : setTacticOut;
 
     const customFormation = isIn ? customIn : customOut;
     const setCustomFormation = isIn ? setCustomIn : setCustomOut;
 
-    // Global Data (Shared across phases)
-    const [subs, setSubs] = useLocalStorage<Record<number, string>>('wts-tactics-subs-v2', {});
-    const [setPieces, setSetPieces] = useLocalStorage<Record<string, string>>('wts-tactics-set-pieces-v2', {});
-    const [penalties, setPenalties] = useLocalStorage<Record<number, string>>('wts-tactics-penalties-v2', {});
-
-    // Effect: Reset Custom Formation when Team Size changes (applies to both if we wanted, but logic is tricky here as hooks assume generic. 
-    // We'll just reset current active one or rely on user to fix. Simplicity: Reset current active if invalid.
+    // Effect: Validation logic
     useEffect(() => {
-        // Validation logic
         if (!availableFormations[selectedTactic]) {
             setSelectedTactic(Object.keys(availableFormations)[0]);
         }
@@ -109,11 +103,9 @@ export default function TacticsPage() {
         const newSetPieces = { ...setPieces };
         const newPenalties = { ...penalties };
 
-        // For pitch moves, we only remove from CURRENT phase lineup.
-        if (targetType === 'pitch') {
+        // Clean up previous location (Shared Lineup/Subs means standard cleanup)
+        if (targetType === 'pitch' || targetType === 'sub') {
             Object.keys(newLineup).forEach(key => { if (newLineup[parseInt(key)] === playerId) delete newLineup[parseInt(key)]; });
-        }
-        if (targetType === 'sub') {
             Object.keys(newSubs).forEach(key => { if (newSubs[parseInt(key)] === playerId) delete newSubs[parseInt(key)]; });
         }
 
@@ -451,9 +443,12 @@ export default function TacticsPage() {
 
                         {/* Substitutes */}
                         <div className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-3xl p-5 flex flex-col gap-3">
-                            <div className="flex items-center justify-between">
-                                <h3 className="text-sm font-bold text-white uppercase tracking-widest">Substitutes</h3>
-                                <span className="text-[10px] bg-white/5 px-2 py-0.5 rounded text-gray-400">Max {teamSize === 11 ? 7 : 3}</span>
+                            <div className="flex items-center justify-between items-end">
+                                <div>
+                                    <span className="text-wts-green text-[10px] font-bold tracking-[0.3em] uppercase block mb-1.5 font-mono">BENCH</span>
+                                    <h3 className="text-2xl md:text-3xl font-display font-bold italic uppercase tracking-tighter text-white leading-none">SUBSTITUTES</h3>
+                                </div>
+                                <span className="text-[10px] bg-white/5 px-2 py-0.5 rounded text-gray-400 mb-1">Max {teamSize === 11 ? 7 : 3}</span>
                             </div>
                             <div className="space-y-2">
                                 {Array.from({ length: teamSize === 11 ? 7 : 3 }).map((_, i) => {
@@ -496,7 +491,10 @@ export default function TacticsPage() {
                         {/* Set Pieces - Only for 11-a-side */}
                         {teamSize === 11 && (
                             <div className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-3xl p-5 flex flex-col gap-3">
-                                <h3 className="text-sm font-bold text-white uppercase tracking-widest">Set Pieces</h3>
+                                <div>
+                                    <span className="text-wts-green text-[10px] font-bold tracking-[0.3em] uppercase block mb-1.5 font-mono">ASSIGNMENTS</span>
+                                    <h3 className="text-2xl md:text-3xl font-display font-bold italic uppercase tracking-tighter text-white leading-none">SET PIECES</h3>
+                                </div>
                                 <div className="space-y-2">
                                     {[
                                         { label: 'Corners (L)', key: 'corners_l' },
@@ -531,7 +529,10 @@ export default function TacticsPage() {
 
                         {/* Penalties */}
                         <div className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-3xl p-5 flex flex-col gap-3">
-                            <h3 className="text-sm font-bold text-white uppercase tracking-widest">Penalties</h3>
+                            <div>
+                                <span className="text-wts-green text-[10px] font-bold tracking-[0.3em] uppercase block mb-1.5 font-mono">SHOOTOUT</span>
+                                <h3 className="text-2xl md:text-3xl font-display font-bold italic uppercase tracking-tighter text-white leading-none">PENALTIES</h3>
+                            </div>
                             <div className="space-y-2">
                                 {[1, 2, 3].map((order) => {
                                     const playerId = penalties[order];
