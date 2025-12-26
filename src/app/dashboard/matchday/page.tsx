@@ -199,37 +199,48 @@ export default function MatchdayPage() {
                 <div className="space-y-6 animate-in slide-in-from-bottom-4 duration-500">
 
                     {/* Header / Hero */}
-                    <div className="p-6 bg-black/40 backdrop-blur-md border border-white/10 rounded-3xl flex flex-col md:flex-row items-center justify-between">
-                        <div className="flex items-center space-x-4 mb-4 md:mb-0">
-                            <div className="w-12 h-12 bg-wts-green flex items-center justify-center rounded-xl text-black font-bold shrink-0">
-                                VS
-                            </div>
-                            <div>
-                                <span className="text-wts-green text-sm font-bold tracking-[0.3em] uppercase block mb-0.5 font-mono">NEXT FIXTURE</span>
-                                <h1 className="text-4xl md:text-5xl font-display font-bold italic text-white uppercase tracking-tighter leading-none">
-                                    Match Day Live
+                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-2">
+                        <div>
+                            <span className="text-wts-green text-sm font-bold tracking-[0.3em] uppercase block mb-1.5 font-mono flex items-center gap-3">
+                                <span>NEXT FIXTURE</span>
+                                <span className="w-1 h-1 rounded-full bg-wts-green/50"></span>
+                                <span>{MATCH_DATA.date}</span>
+                            </span>
+                            <div className="flex flex-col">
+                                <h1 className="text-4xl md:text-5xl font-display font-bold italic text-white uppercase tracking-tighter leading-none mb-2">
+                                    MATCH DAY LIVE
                                 </h1>
-                                <div className="flex items-center space-x-3 text-xs font-bold text-gray-400 uppercase tracking-widest mt-1">
-                                    <span className="flex items-center space-x-1"><Calendar size={12} /><span>{MATCH_DATA.date}</span></span>
-                                    <span className="flex items-center space-x-1"><MapPin size={12} /><span>{MATCH_DATA.venue}</span></span>
+                                <div className="flex items-center space-x-5 text-xs font-bold text-gray-400 uppercase tracking-widest">
+                                    <span className="flex items-center space-x-2">
+                                        <MapPin size={14} className="text-wts-green" />
+                                        <span>{MATCH_DATA.venue}</span>
+                                    </span>
+                                    <span className="flex items-center space-x-2">
+                                        <span className="w-1.5 h-1.5 bg-gray-600 rounded-full"></span>
+                                        <span>VS {MATCH_DATA.opponent}</span>
+                                    </span>
                                 </div>
                             </div>
                         </div>
+
                         <div className="flex items-center space-x-3">
                             <button
                                 onClick={handleGeneratePreview}
                                 disabled={isSharing}
-                                className="px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-xs font-bold text-white uppercase tracking-widest flex items-center space-x-2 transition-all disabled:opacity-50"
+                                className="bg-black/40 text-white border border-white/10 hover:bg-white/10 px-6 py-4 rounded-xl font-bold uppercase tracking-widest text-sm flex items-center space-x-3 shadow-lg transition-all disabled:opacity-50"
                             >
-                                {isSharing ? <Loader2 size={14} className="animate-spin" /> : <Share2 size={14} />}
-                                <span>{isSharing ? 'Generating...' : 'Share Lineup'}</span>
+                                {isSharing ? <Loader2 size={18} className="animate-spin" /> : <Share2 size={18} />}
+                                <span className="hidden sm:inline">{isSharing ? 'Generating...' : 'Share'}</span>
                             </button>
-                            <button className="px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-xs font-bold text-white uppercase tracking-widest flex items-center space-x-2 transition-all">
-                                <Bell size={14} />
-                                <span>Notify Squad</span>
+
+                            <button className="bg-black/40 text-white border border-white/10 hover:bg-white/10 px-6 py-4 rounded-xl font-bold uppercase tracking-widest text-sm flex items-center space-x-3 shadow-lg transition-all">
+                                <Bell size={18} />
+                                <span className="hidden sm:inline">Notify</span>
                             </button>
-                            <button className="px-4 py-2 bg-wts-green text-black rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-wts-green/90 transition-all">
-                                Match Centre
+
+                            <button className="bg-wts-green text-black px-6 py-4 rounded-xl font-bold uppercase tracking-widest text-sm flex items-center space-x-3 shadow-lg shadow-wts-green/10 hover:bg-white transition-all">
+                                <Tv size={18} />
+                                <span>Match Centre</span>
                             </button>
                         </div>
                     </div>
