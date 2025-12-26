@@ -261,7 +261,7 @@ export default function MatchdayPage() {
                                 <div className="bg-black/40 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden">
                                     {subs.map((player: any) => (
                                         <div key={player.id} className="flex items-center p-3 border-b border-white/5 last:border-0 hover:bg-white/5 transition-colors group">
-                                            <div className="w-8 font-mono text-sm text-gray-500 font-bold group-hover:text-wts-green transition-colors">S</div>
+                                            <div className="w-8 font-mono text-sm text-gray-500 font-bold group-hover:text-wts-green transition-colors">{player.number}</div>
                                             <div className="flex-1">
                                                 <span className="text-sm font-bold text-white uppercase tracking-wide">{player.name}</span>
                                             </div>
