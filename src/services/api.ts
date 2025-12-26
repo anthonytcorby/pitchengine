@@ -17,7 +17,7 @@ class ApiService {
                 email: "internal@test.local",
                 role: "MANAGER",
                 subscriptionTier: "PRO",
-                teamId: "team-wts"
+                // teamId removed to simulate new user without team
             });
         }
 
@@ -86,7 +86,7 @@ class ApiService {
     }
 
     async getSquad(teamId: string): Promise<Player[]> {
-        return TEAMSHEET as any;
+        return []; // Wiped mock data
     }
 
     async getFixtures(teamId: string): Promise<Fixture[]> {
@@ -94,19 +94,8 @@ class ApiService {
         try {
             return await getTeamMatches(teamId);
         } catch (e) {
-            console.warn("Firestore fetch failed, falling back to mock", e);
-            return [{
-                id: 'fix-1',
-                teamId: teamId,
-                opponent: MATCH_DATA.opponent,
-                date: '2025-12-31',
-                time: MATCH_DATA.time,
-                venue: MATCH_DATA.venue,
-                type: 'LEAGUE',
-                status: 'upcoming',
-                resultHome: null,
-                resultAway: null
-            }] as any;
+            console.warn("Firestore fetch failed, falling back to mock (empty)", e);
+            return []; // Wiped mock data
         }
     }
 
