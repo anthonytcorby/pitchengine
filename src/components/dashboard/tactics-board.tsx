@@ -319,7 +319,7 @@ function FormationNode({
         e.preventDefault();
         e.stopPropagation();
         setIsOver(false);
-        const playerId = e.dataTransfer.getData('playerId');
+        const playerId = e.dataTransfer.getData('text/plain');
         if (playerId) {
             onDrop(playerId, index);
         }
@@ -343,7 +343,7 @@ function FormationNode({
             onDragStart={(e) => {
                 if (isLocked) {
                     if (player) {
-                        e.dataTransfer.setData('playerId', player.id);
+                        e.dataTransfer.setData('text/plain', player.id);
                         e.dataTransfer.setData('fromIndex', index.toString());
                         setDragGhost(e, player.number, player.position);
                         e.stopPropagation();

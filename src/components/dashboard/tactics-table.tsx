@@ -43,7 +43,7 @@ export function TacticsTable({ squad, lineup, subs }: TacticsTableProps) {
                                     key={player.id}
                                     draggable={true}
                                     onDragStart={(e) => {
-                                        e.dataTransfer.setData('playerId', player.id);
+                                        e.dataTransfer.setData('text/plain', player.id);
                                         setDragGhost(e, player.number, player.position);
                                     }}
                                     className={`border-b border-white/5 last:border-0 transition-all cursor-grab active:cursor-grabbing group hover:bg-white/5 border-l-4 border-l-transparent ${picked

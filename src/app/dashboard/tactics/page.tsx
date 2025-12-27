@@ -268,9 +268,9 @@ export default function TacticsPage() {
 
         // Groups
         const GKS = ['GK'];
-        const DEFS = ['CB', 'LB', 'RB', 'LWB', 'RWB'];
-        const MIDS = ['CM', 'CDM', 'CAM', 'LM', 'RM', 'LW', 'RW', 'AML', 'AMR', 'AM'];
-        const FWDS = ['ST', 'CF'];
+        const DEFS = ['CB', 'LB', 'RB', 'LWB', 'RWB', 'DEF'];
+        const MIDS = ['CM', 'CDM', 'CAM', 'LM', 'RM', 'LW', 'RW', 'AML', 'AMR', 'AM', 'MID'];
+        const FWDS = ['ST', 'CF', 'FWD'];
 
         if (GKS.includes(slotRole)) return GKS.includes(playerPos);
         if (DEFS.includes(slotRole)) return DEFS.includes(playerPos);
@@ -500,7 +500,7 @@ export default function TacticsPage() {
                                             key={i}
                                             onDragOver={handleDragOver}
                                             onDrop={(e) => {
-                                                const playerId = e.dataTransfer.getData('playerId');
+                                                const playerId = e.dataTransfer.getData('text/plain');
                                                 if (playerId) handleDrop(playerId, 'sub', i);
                                             }}
                                             className={`flex items-center justify-between p-2 rounded-xl border transition-all cursor-pointer group ${subPlayer
@@ -546,7 +546,7 @@ export default function TacticsPage() {
                                                 key={type.key}
                                                 onDragOver={handleDragOver}
                                                 onDrop={(e) => {
-                                                    const pid = e.dataTransfer.getData('playerId');
+                                                    const pid = e.dataTransfer.getData('text/plain');
                                                     if (pid) handleDrop(pid, 'setPiece', type.key);
                                                 }}
                                                 className={`flex items-center justify-between p-2.5 rounded-xl border transition-all ${player ? 'bg-white/5 border-white/5' : 'bg-black/20 border-dashed border-white/10'}`}
@@ -577,7 +577,7 @@ export default function TacticsPage() {
                                             key={order}
                                             onDragOver={handleDragOver}
                                             onDrop={(e) => {
-                                                const pid = e.dataTransfer.getData('playerId');
+                                                const pid = e.dataTransfer.getData('text/plain');
                                                 if (pid) handleDrop(pid, 'penalty', order);
                                             }}
                                             className={`flex items-center justify-between p-2 rounded-xl border transition-all ${player ? 'bg-white/5 border-white/5' : 'bg-black/20 border-dashed border-white/10'}`}
