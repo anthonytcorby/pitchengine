@@ -13,10 +13,13 @@ export interface OnboardingData {
     kickoffTime: string;
     venue: string;
     league: string;
+    trialStatus?: 'none' | 'active' | 'expired';
+    trialEndsAt?: number;
     fixtureId?: string;
 
     // Player Data
     playerName: string;
+    playerNationality: string;
     playerPosition: string;
     playerAvailability: string;
 }
@@ -41,8 +44,11 @@ const INITIAL_STATE: OnboardingState = {
         kickoffTime: '19:00',
         venue: '',
         league: '',
+        trialStatus: 'none',
+        trialEndsAt: undefined,
         // Player
         playerName: '',
+        playerNationality: 'gb-eng',
         playerPosition: 'MID',
         playerAvailability: 'Available'
     }

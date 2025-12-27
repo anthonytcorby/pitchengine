@@ -86,7 +86,46 @@ class ApiService {
     }
 
     async getSquad(teamId: string): Promise<Player[]> {
-        return []; // Wiped mock data
+        if (typeof window === 'undefined') return [];
+
+        try {
+            // Read from Onboarding storage as the "source of truth" for this prototype
+            const stored = localStorage.getItem('wts-onboarding-progress');
+            if (stored) {
+                const parsed = JSON.parse(stored);
+                // Onboarding state shape: { step, role, completed, data: { players: [...] } }
+                const onboardingPlayers = parsed.data?.players || [];
+
+                // Map to Schema Player
+                return onboardingPlayers.map((p: any, index: number) => ({
+                    id: `p-${index}`, // Simple ID generation
+                    teamId: teamId,
+                    name: p.name,
+                    number: index + 1, // Assign shirt numbers 1..N
+                    role: (p.position || 'MID') as any, // Cast to Role
+                    position: (p.position || 'MID') as any,
+                    // Use stored nationality if available (mostly for 'Me' player), otherwise default. 
+                    // Note: Managers name is stored in playerName/playerNationality at root, 
+                    // but 'players' array items might not have it unless we sync it.
+                    // For the MANAGER (who is usually the first player or separate), we check if this player matches the manager name.
+                    // Actually, the Manager creates 'players' array. Does he add himself?
+                    // Usually yes. But let's assume if it's the manager (index 0 usually, or by name match), use root nationality.
+                    // For simplicity, let's look for a name match with `parsed.data.playerName`.
+                    nationality: (p.name === parsed.data?.playerName) ? (parsed.data?.playerNationality || 'gb-eng') : 'gb-eng',
+                    preferredFoot: 'Right',
+                    captain: !!p.captain,
+                    reliability: 100, // New team = 100%
+                    attendance: 100,
+                    preferred: false,
+                    reliabilityHistory: [],
+                    stats: { appearances: 0, goals: 0, assists: 0, yellowCards: 0, redCards: 0, motm: 0 }
+                }));
+            }
+        } catch (e) {
+            console.error("Failed to read squad from storage", e);
+        }
+
+        return [];
     }
 
     async getFixtures(teamId: string): Promise<Fixture[]> {

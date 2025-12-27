@@ -3,6 +3,7 @@
 import { OnboardingData } from '@/hooks/use-onboarding';
 import { useLanguage } from '@/hooks/use-language';
 import { User, ArrowRight } from 'lucide-react';
+import { CountryAutocomplete } from '@/components/ui/country-autocomplete';
 
 interface ManagerNameScreenProps {
     data: OnboardingData;
@@ -47,6 +48,13 @@ export function ManagerNameScreen({ data, onUpdate, onNext }: ManagerNameScreenP
                         />
                     </div>
                 </div>
+
+                <CountryAutocomplete
+                    label="Nationality"
+                    value={data.playerNationality || 'gb-eng'}
+                    onChange={(val) => onUpdate({ playerNationality: val })}
+                    placeholder="Select nationality..."
+                />
             </div>
 
             <button

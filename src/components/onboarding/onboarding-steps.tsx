@@ -10,6 +10,7 @@ import { api } from '@/services/api';
 import { CreateClubScreen } from './screens/create-club-screen';
 import { ManagerNameScreen } from './screens/manager-name-screen';
 import { MatchDefaultsScreen } from './screens/match-defaults-screen';
+import { PaywallScreen } from './screens/paywall-screen';
 import { LanguageSelectionScreen } from './screens/language-selection-screen';
 import { TacticsPreviewScreen } from './screens/tactics-preview-screen';
 
@@ -443,6 +444,13 @@ export function OnboardingSteps({ currentStep, role, data, onSetRole, onUpdate, 
                     />
                 </div>
 
+                <CountryAutocomplete
+                    label="Nationality"
+                    value={data.playerNationality || 'gb-eng'}
+                    onChange={(val) => onUpdate({ playerNationality: val })}
+                    placeholder="Select nationality..."
+                />
+
                 <div className="space-y-2">
                     <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">{t('onboarding.preferred_position_label')}</label>
                     <select
@@ -510,14 +518,14 @@ export function OnboardingSteps({ currentStep, role, data, onSetRole, onUpdate, 
                     <motion.div
                         className="h-full bg-wts-green shadow-[0_0_10px_rgba(0,255,65,0.5)]"
                         initial={{ width: 0 }}
-                        animate={{ width: `${(currentStep / (role === 'MANAGER' ? 10 : 5)) * 100}%` }}
+                        animate={{ width: `${(currentStep / (role === 'MANAGER' ? 11 : 5)) * 100}%` }}
                         transition={{ duration: 0.5 }}
                     />
                 </div>
             )}
 
             {/* Back Button */}
-            {currentStep > 0 && currentStep < (role === 'MANAGER' ? 10 : 5) && (
+            {currentStep > 0 && currentStep < (role === 'MANAGER' ? 11 : 5) && (
                 <button
                     onClick={onBack}
                     className="fixed top-8 left-8 text-gray-500 hover:text-white transition-colors z-40"
@@ -573,7 +581,14 @@ export function OnboardingSteps({ currentStep, role, data, onSetRole, onUpdate, 
                             />
                         )}
                         {currentStep === 9 && <ScreenFeesClarity />}
-                        {currentStep === 10 && <ScreenManagerConfirmation />}
+                        {currentStep === 10 && (
+                            <PaywallScreen
+                                data={data}
+                                onUpdate={onUpdate}
+                                onNext={onNext}
+                            />
+                        )}
+                        {currentStep === 11 && <ScreenManagerConfirmation />}
                     </motion.div>
                 )}
 

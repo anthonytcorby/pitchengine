@@ -113,7 +113,11 @@ export default function CommsPage() {
         recipient: 'everyone',
         subject: '',
         content: '',
-        isPinned: false
+        isPinned: false,
+        opponent: '',
+        venue: '',
+        kickoff: '',
+        matchFee: ''
     });
 
     const filteredMessages = messages.filter(msg => {
@@ -133,19 +137,30 @@ export default function CommsPage() {
             type: newMessage.type,
             status: 'read', // Sender sees it as "read" or irrelevant
             sender: { name: 'Anthony Corby', role: 'Manager' }, // Hardcoded curr user
-            subject: newMessage.subject || 'No Subject',
-            preview: newMessage.content.substring(0, 50) + '...',
+            subject: newMessage.type === 'fixture'
+                ? `MATCHDAY: vs ${newMessage.opponent}`
+                : (newMessage.subject || 'No Subject'),
+            preview: newMessage.type === 'fixture'
+                ? `Kickoff ${newMessage.kickoff} • ${newMessage.venue}`
+                : (newMessage.content.substring(0, 50) + '...'),
             content: newMessage.content,
             timestamp: 'Just now',
             isPinned: newMessage.isPinned,
             readCount: 0,
-            total: 15 // Mock total squad size
+            total: 15, // Mock total squad size
+            meta: newMessage.type === 'fixture' ? {
+                location: newMessage.venue,
+                matchFee: parseFloat(newMessage.matchFee) || 0
+            } : undefined
         };
 
         setMessages([newMsg, ...messages]);
         setSelectedMessageId(newMsg.id);
         setIsComposeOpen(false);
-        setNewMessage({ type: 'announcement', recipient: 'everyone', subject: '', content: '', isPinned: false });
+        setNewMessage({
+            type: 'announcement', recipient: 'everyone', subject: '', content: '', isPinned: false,
+            opponent: '', venue: '', kickoff: '', matchFee: ''
+        });
     };
 
     return (
@@ -214,17 +229,63 @@ export default function CommsPage() {
                             </div>
 
                             {/* Subject */}
-                            <div className="space-y-2">
-                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Subject</label>
-                                <input
-                                    type="text"
-                                    value={newMessage.subject}
-                                    onChange={(e) => setNewMessage({ ...newMessage, subject: e.target.value })}
-                                    className="w-full bg-black/40 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-wts-green/50 font-medium"
-                                    placeholder="e.g. Training Schedule Change"
-                                    autoFocus
-                                />
-                            </div>
+                            {/* Fixture Details or Subject */}
+                            {newMessage.type === 'fixture' ? (
+                                <div className="grid grid-cols-2 gap-6">
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Opponent</label>
+                                        <input
+                                            type="text"
+                                            value={newMessage.opponent}
+                                            onChange={(e) => setNewMessage({ ...newMessage, opponent: e.target.value })}
+                                            className="w-full bg-black/40 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-wts-green/50 font-medium"
+                                            placeholder="e.g. Red Star FC"
+                                            autoFocus
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Venue</label>
+                                        <input
+                                            type="text"
+                                            value={newMessage.venue}
+                                            onChange={(e) => setNewMessage({ ...newMessage, venue: e.target.value })}
+                                            className="w-full bg-black/40 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-wts-green/50 font-medium"
+                                            placeholder="e.g. Hackney Marshes"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Kickoff</label>
+                                        <input
+                                            type="time"
+                                            value={newMessage.kickoff}
+                                            onChange={(e) => setNewMessage({ ...newMessage, kickoff: e.target.value })}
+                                            className="w-full bg-black/40 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-wts-green/50 font-medium"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Match Fee (£)</label>
+                                        <input
+                                            type="number"
+                                            value={newMessage.matchFee}
+                                            onChange={(e) => setNewMessage({ ...newMessage, matchFee: e.target.value })}
+                                            className="w-full bg-black/40 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-wts-green/50 font-medium"
+                                            placeholder="5.00"
+                                        />
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Subject</label>
+                                    <input
+                                        type="text"
+                                        value={newMessage.subject}
+                                        onChange={(e) => setNewMessage({ ...newMessage, subject: e.target.value })}
+                                        className="w-full bg-black/40 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-wts-green/50 font-medium"
+                                        placeholder="e.g. Training Schedule Change"
+                                        autoFocus
+                                    />
+                                </div>
+                            )}
 
                             {/* Content */}
                             <div className="space-y-2">
@@ -408,19 +469,27 @@ export default function CommsPage() {
                                             <div className="grid grid-cols-2 gap-8">
                                                 <div>
                                                     <label className="text-[10px] font-bold text-blue-400 uppercase tracking-widest mb-1 block">Opponent</label>
-                                                    <p className="text-xl font-bold text-white">Red Star FC</p>
+                                                    <p className="text-xl font-bold text-white">
+                                                        {selectedMessage.subject.replace('MATCHDAY: vs ', '')}
+                                                    </p>
                                                 </div>
                                                 <div>
                                                     <label className="text-[10px] font-bold text-blue-400 uppercase tracking-widest mb-1 block">Venue</label>
-                                                    <p className="text-xl font-bold text-white">Hackney Marshes</p>
+                                                    <p className="text-xl font-bold text-white">
+                                                        {selectedMessage.meta?.location || 'TBC'}
+                                                    </p>
                                                 </div>
                                                 <div>
                                                     <label className="text-[10px] font-bold text-blue-400 uppercase tracking-widest mb-1 block">Kickoff</label>
-                                                    <p className="text-xl font-bold text-white">14:00</p>
+                                                    <p className="text-xl font-bold text-white">
+                                                        {selectedMessage.preview.split('•')[0].replace('Kickoff ', '').trim()}
+                                                    </p>
                                                 </div>
                                                 <div>
                                                     <label className="text-[10px] font-bold text-blue-400 uppercase tracking-widest mb-1 block">Match Fee</label>
-                                                    <p className="text-xl font-bold text-white">£5.00</p>
+                                                    <p className="text-xl font-bold text-white">
+                                                        £{selectedMessage.meta?.matchFee?.toFixed(2) || '0.00'}
+                                                    </p>
                                                 </div>
                                             </div>
                                             <div className="pt-4 border-t border-blue-500/20">

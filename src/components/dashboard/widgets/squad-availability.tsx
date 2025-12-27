@@ -4,19 +4,33 @@ import { Users, CheckCircle2, XCircle, HelpCircle } from 'lucide-react';
 import Link from 'next/link';
 import { Player } from '@/types/schema';
 import { useLanguage } from '@/hooks/use-language';
+import { useState, useEffect } from 'react';
+import { api } from '@/services/api';
 
 // Mock data integration or props later
 export function SquadAvailabilityWidget() {
     const { t } = useLanguage();
-    // Determine metrics
-    const stats = {
-        in: 12,
-        maybe: 2,
-        out: 1,
-        total: 15
-    };
+    const [stats, setStats] = useState({
+        in: 0,
+        maybe: 0,
+        out: 0,
+        total: 0
+    });
 
-    const percentage = Math.round((stats.in / stats.total) * 100);
+    useEffect(() => {
+        const load = async () => {
+            const squad = await api.getSquad('team-wts');
+            setStats({
+                in: 0, // No availability data yet
+                maybe: 0,
+                out: 0,
+                total: squad.length
+            });
+        };
+        load();
+    }, []);
+
+    const percentage = stats.total > 0 ? Math.round((stats.in / stats.total) * 100) : 0;
 
     return (
         <div className="bg-black/40 border border-white/5 rounded-2xl p-6 relative group hover:border-wts-green/20 transition-all duration-300">
