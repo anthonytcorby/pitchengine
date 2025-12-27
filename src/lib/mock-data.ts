@@ -31,13 +31,13 @@ export const TEAMSHEET: Player[] = [
 // Initial formations map positions (0-10) to these specific IDs for the default 4-4-2
 // mapped linearly: GK(1), LB(3), CB(4), CB(5), RB(2), LM(7), CM(8), CM(6), RM(12?), ST(9), ST(10)
 
-export const MATCH_DATA = {
-    opponent: 'Tech United',
-    competition: 'Premier Division',
-    venue: 'The Code Arena',
-    date: 'Tuesday 24 Oct',
-    time: '19:45',
-    weather: 'Rainy, 12°C',
-    kit: 'Home (Green)',
-    referee: 'M. Dean'
-};
+// export const MATCH_DATA = {
+//     opponent: 'Tech United',
+//     competition: 'Premier Division',
+//     venue: 'The Code Arena',
+//     date: 'Tuesday 24 Oct',
+//     time: '19:45',
+//     weather: 'Rainy, 12°C',
+//     kit: 'Home (Green)',
+//     referee: 'M. Dean'
+// };

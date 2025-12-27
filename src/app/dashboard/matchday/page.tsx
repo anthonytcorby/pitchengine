@@ -13,19 +13,20 @@ import { SharePreviewModal } from '@/components/dashboard/share-preview-modal';
 import { TacticsBoard } from '@/components/dashboard/tactics-board';
 import html2canvas from 'html2canvas';
 
-const MATCH_DATA = {
-    opponent: 'Tech United',
-    competition: 'Premier Division',
-    venue: 'The Code Arena',
-    date: 'Tuesday 24 Oct',
-    time: '19:45',
-    weather: 'Rainy, 12°C',
-    kit: 'Home (Green)',
-    referee: 'M. Dean'
+const defaultMatch = {
+    opponent: 'Upcoming Match',
+    competition: '-',
+    venue: '-',
+    date: '-',
+    time: '-',
+    weather: '-',
+    kit: '-',
+    referee: '-'
 };
 
 export default function MatchdayPage() {
-    const [hasMatch, setHasMatch] = useState(true);
+    const [hasMatch, setHasMatch] = useState(false);
+    const [matchData, setMatchData] = useState<any>(defaultMatch);
     const [squad, setSquad] = useState<Player[]>([]);
 
     // UI State for toggle
@@ -56,8 +57,33 @@ export default function MatchdayPage() {
 
     useEffect(() => {
         const loadData = async () => {
-            const data = await api.getSquad('team-wts');
-            setSquad(data);
+            try {
+                const [squadData, fixturesData] = await Promise.all([
+                    api.getSquad('team-wts'),
+                    api.getFixtures('team-wts')
+                ]);
+                setSquad(squadData);
+
+                // Find next upcoming fixture
+                const upcoming = fixturesData.find((f: any) => f.status === 'upcoming');
+                if (upcoming) {
+                    setHasMatch(true);
+                    setMatchData({
+                        opponent: upcoming.opponent,
+                        competition: upcoming.type === 'LEAGUE' ? 'League Match' : 'Friendly',
+                        venue: upcoming.venue,
+                        date: new Date(upcoming.date).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'short' }),
+                        time: upcoming.time,
+                        weather: 'Forecast Pending',
+                        kit: 'Home',
+                        referee: 'TBC'
+                    });
+                } else {
+                    setHasMatch(false);
+                }
+            } catch (e) {
+                console.error("Failed to load matchday data", e);
+            }
         };
         loadData();
     }, []);
@@ -114,12 +140,12 @@ export default function MatchdayPage() {
 
         try {
             const blob = await (await fetch(previewUrl)).blob();
-            const file = new File([blob], `lineup-${MATCH_DATA.opponent}.png`, { type: 'image/png' });
+            const file = new File([blob], `lineup-${matchData.opponent}.png`, { type: 'image/png' });
 
             if (navigator.share) {
                 await navigator.share({
                     title: 'Match Day Squad',
-                    text: `Here is our starting XI vs ${MATCH_DATA.opponent}! #PitchEngine`,
+                    text: `Here is our starting XI vs ${matchData.opponent}! #PitchEngine`,
                     files: [file]
                 });
             } else {
@@ -135,7 +161,7 @@ export default function MatchdayPage() {
     const handleDownload = () => {
         if (!previewUrl) return;
         const link = document.createElement('a');
-        link.download = `lineup-${MATCH_DATA.opponent}.png`;
+        link.download = `lineup-${matchData.opponent}.png`;
         link.href = previewUrl;
         link.click();
     };
@@ -150,7 +176,7 @@ export default function MatchdayPage() {
                 startingXI={startingXI}
                 subs={subs}
                 formationCoords={formationCoords}
-                matchDetails={MATCH_DATA}
+                matchDetails={matchData}
                 teamName="PITCH ENGINE"
             />
 
@@ -204,7 +230,7 @@ export default function MatchdayPage() {
                             <span className="text-wts-green text-sm font-bold tracking-[0.3em] uppercase block mb-1.5 font-mono flex items-center gap-3">
                                 <span>NEXT FIXTURE</span>
                                 <span className="w-1 h-1 rounded-full bg-wts-green/50"></span>
-                                <span>{MATCH_DATA.date}</span>
+                                <span>{matchData.date}</span>
                             </span>
                             <div className="flex flex-col">
                                 <h1 className="text-4xl md:text-5xl font-display font-bold italic text-white uppercase tracking-tighter leading-none mb-2">
@@ -213,11 +239,11 @@ export default function MatchdayPage() {
                                 <div className="flex items-center space-x-5 text-xs font-bold text-gray-400 uppercase tracking-widest">
                                     <span className="flex items-center space-x-2">
                                         <MapPin size={14} className="text-wts-green" />
-                                        <span>{MATCH_DATA.venue}</span>
+                                        <span>{matchData.venue}</span>
                                     </span>
                                     <span className="flex items-center space-x-2">
                                         <span className="w-1.5 h-1.5 bg-gray-600 rounded-full"></span>
-                                        <span>VS {MATCH_DATA.opponent}</span>
+                                        <span>VS {matchData.opponent}</span>
                                     </span>
                                 </div>
                             </div>
