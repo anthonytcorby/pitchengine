@@ -30,32 +30,29 @@ export default function FixturesPage() {
     // View State
     const [viewMode, setViewMode] = useState<'list' | 'calendar'>('list');
     const [currentDate, setCurrentDate] = useState(new Date());
+    const [teamName, setTeamName] = useState('GAFFR'); // Default, will update
 
     useEffect(() => {
         const loadFixtures = async () => {
-            // Fetch real fixtures (mocked 'team-wts' for now)
-            // api.getFixtures returns [] by default now so this will be empty startup
-            // If user adds fixtures, we might need to handle perstitence later, 
-            // but for now "Remove fake data" means start empty.
-            // Since api.getFixtures is async, we simulate it or use it if we implemented it.
-            // Current api.getFixtures returns [] or DB fetch.
-            // We'll trust API to return [] initially.
             const data = await api.getFixtures('team-wts');
-            // Map API Fixture to local Fixture interface if they differ, or use compatible types.
-            // API Fixture has id: string usually, local here has id: number.
-            // Let's adjust local state to match API handling or just set it.
-            // Since we want to remove FAKE data, initializing to [] is key.
-            // Ideally we also save new fixtures to API/Storage so they persist, 
-            // avoiding "fake data" reappearing or data disappearing.
-            // For this step: just wipe the initial state.
-            // And maybe simple fetch for future proofing.
-            // setFixtures(data as any); 
-            // Actually, since api.getFixtures isn't fully implemented with a write/read for *this* component's local non-persistent array,
-            // let's just leave it as empty array start, and the user can adding temporary ones via state, 
-            // which is better than fake data.
+            // Also fetch team details if possible
+            // Assuming api.getSquad was used elsewhere with 'team-wts', we might not have a getTeam endpoint yet.
+            // But we can check local storage or use a placeholder that user can edit.
+            // Actually, let's try to get it from local storage if available from onboarding.
+            const storedTeam = localStorage.getItem('wts-team-data');
+            if (storedTeam) {
+                try {
+                    const parsed = JSON.parse(storedTeam);
+                    if (parsed.name) setTeamName(parsed.name);
+                } catch (e) {
+                    console.error('Failed to parse team data', e);
+                }
+            }
         };
         loadFixtures();
     }, []);
+
+
 
     const handleAddFixture = (e: React.FormEvent) => {
         e.preventDefault();
@@ -391,7 +388,7 @@ END:VEVENT
                                     </div>
                                     <div className="flex items-center space-x-3 mb-2">
                                         <span className="text-lg font-outfit font-bold text-white">
-                                            GAFFR
+                                            {teamName}
                                         </span>
                                         <span className="text-sm font-bold text-wts-green">vs</span>
                                         <span className="text-lg font-outfit font-bold text-white">

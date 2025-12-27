@@ -103,20 +103,56 @@ export default function TacticsPage() {
         const newSetPieces = { ...setPieces };
         const newPenalties = { ...penalties };
 
-        // Clean up previous location (Shared Lineup/Subs means standard cleanup)
-        if (targetType === 'pitch' || targetType === 'sub') {
-            Object.keys(newLineup).forEach(key => { if (newLineup[parseInt(key)] === playerId) delete newLineup[parseInt(key)]; });
-            Object.keys(newSubs).forEach(key => { if (newSubs[parseInt(key)] === playerId) delete newSubs[parseInt(key)]; });
+        // 1. Find source location of the dragged player
+        let sourceIndex: number | string | null = null;
+        let sourceType: 'pitch' | 'sub' | 'setPiece' | 'penalty' | null = null;
+
+        // Check Pitch
+        const pitchKey = Object.keys(newLineup).find(key => newLineup[parseInt(key)] === playerId);
+        if (pitchKey) {
+            sourceIndex = parseInt(pitchKey);
+            sourceType = 'pitch';
+            delete newLineup[sourceIndex as number];
         }
 
-        if (targetType === 'pitch') {
-            newLineup[targetIndex as number] = playerId;
-        } else if (targetType === 'sub') {
-            newSubs[targetIndex as number] = playerId;
-        } else if (targetType === 'setPiece') {
-            newSetPieces[targetIndex as string] = playerId;
-        } else if (targetType === 'penalty') {
-            newPenalties[targetIndex as number] = playerId;
+        // Check Subs
+        if (!sourceType) {
+            const subKey = Object.keys(newSubs).find(key => newSubs[parseInt(key)] === playerId);
+            if (subKey) {
+                sourceIndex = parseInt(subKey);
+                sourceType = 'sub';
+                delete newSubs[sourceIndex as number];
+            }
+        }
+
+        // Check Set Pieces (Optional: usually duplicate references allowed? If strict move, delete)
+        // Check Penalties (Optional: usually duplicate references allowed?)
+        // For simplicity, we treat SetPieces/Penalties as "copies" or independent assignments, 
+        // unlike Pitch/Subs which are mutually exclusive physical locations.
+
+        // 2. Identify Player currently at Target (if any)
+        let existingPlayerId: string | undefined;
+
+        if (targetType === 'pitch') existingPlayerId = newLineup[targetIndex as number];
+        else if (targetType === 'sub') existingPlayerId = newSubs[targetIndex as number];
+        else if (targetType === 'setPiece') existingPlayerId = newSetPieces[targetIndex as string];
+        else if (targetType === 'penalty') existingPlayerId = newPenalties[targetIndex as number];
+
+        // 3. Place Dragged Player at Target
+        if (targetType === 'pitch') newLineup[targetIndex as number] = playerId;
+        else if (targetType === 'sub') newSubs[targetIndex as number] = playerId;
+        else if (targetType === 'setPiece') newSetPieces[targetIndex as string] = playerId;
+        else if (targetType === 'penalty') newPenalties[targetIndex as number] = playerId;
+
+        // 4. Handle Swap (If existing player was displaced AND source logical for swap)
+        if (existingPlayerId && existingPlayerId !== playerId) {
+            // Only swap if source was Pitch or Sub (physical locations)
+            // If dragging from sidebar (sourceType is null), existing player is just overwritten (sent to void/bench)
+            if (sourceType === 'pitch' && typeof sourceIndex === 'number') {
+                newLineup[sourceIndex] = existingPlayerId;
+            } else if (sourceType === 'sub' && typeof sourceIndex === 'number') {
+                newSubs[sourceIndex] = existingPlayerId;
+            }
         }
 
         setLineup(newLineup);
