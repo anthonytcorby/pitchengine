@@ -262,7 +262,7 @@ export function TacticsBoard({
                                         // Standard Player Drag
                                         if (player) {
                                             e.dataTransfer.setData('playerId', player.id);
-                                            setDragGhost(e, player.number, player.position);
+                                            // setDragGhost(e, player.number, player.position);
                                             e.stopPropagation();
                                         } else {
                                             e.preventDefault();
