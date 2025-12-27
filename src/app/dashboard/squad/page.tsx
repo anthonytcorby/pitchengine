@@ -219,14 +219,17 @@ export default function SquadPage() {
             {/* Invite Player Modal */}
             {isInviteModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-                    <div className="bg-[#0A0A0A] border border-white/10 rounded-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
+                    <div className="bg-[#0A0A0A] border border-white/10 rounded-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200 shadow-2xl">
                         <div className="p-6 border-b border-white/5 flex items-center justify-between">
-                            <h3 className="text-xl font-display font-bold italic text-white uppercase">Invite New Player</h3>
+                            <div>
+                                <h3 className="text-xl font-display font-bold italic text-white uppercase tracking-tighter">Invite Player</h3>
+                                <p className="text-[10px] text-gray-500 font-mono uppercase tracking-widest mt-1">Send an invitation email</p>
+                            </div>
                             <button onClick={() => setIsInviteModalOpen(false)} className="text-gray-500 hover:text-white transition-colors">
                                 <X size={20} />
                             </button>
                         </div>
-                        <form onSubmit={handleInvitePlayer} className="p-6 space-y-4">
+                        <form onSubmit={handleInvitePlayer} className="p-6 space-y-5">
                             <div className="space-y-2">
                                 <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">Full Name</label>
                                 <input
@@ -451,8 +454,18 @@ export default function SquadPage() {
                         {sortedPlayers.map((player) => (
                             <div
                                 key={player.id}
-                                className="grid grid-flow-col auto-cols-[minmax(0,_1fr)] gap-4 p-4 border-b border-white/5 hover:bg-white/5 transition-colors group cursor-pointer"
-                                onClick={() => setEditingPlayer(player)}
+                                className={`grid grid-flow-col auto-cols-[minmax(0,_1fr)] gap-4 p-4 border-b border-white/5 hover:bg-white/5 transition-colors group cursor-pointer ${player.status === 'linkless' ? 'opacity-70 hover:opacity-100 bg-white/[0.02]' : ''}`}
+                                onClick={() => {
+                                    if (player.status === 'linkless') {
+                                        setInviteName(player.name);
+                                        setInviteRole(player.position || 'CM');
+                                        setInviteEmail('');
+                                        setInviteMessage(`Hey ${player.name}, join us on WorkTheSpace!`);
+                                        setIsInviteModalOpen(true);
+                                    } else {
+                                        setEditingPlayer(player);
+                                    }
+                                }}
                             >
                                 {ALL_COLUMNS.map(col => {
                                     if (!visibleColumns.has(col.id)) return null;
@@ -558,7 +571,11 @@ export default function SquadPage() {
                                 {/* Edit Action Column (always present at end) */}
                                 <div className="flex items-center justify-end w-10">
                                     <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <Users size={14} className="text-gray-400" />
+                                        {player.status === 'linkless' ? (
+                                            <Mail size={14} className="text-wts-green" />
+                                        ) : (
+                                            <Users size={14} className="text-gray-400" />
+                                        )}
                                     </div>
                                 </div>
                             </div>

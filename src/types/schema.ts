@@ -40,6 +40,8 @@ export interface Player {
     reliability: number; // 0-100
     attendance: number; // 0-100 (Derived usually, but kept as field per docs)
     preferred: boolean; // "Pref" badge
+    status?: 'active' | 'invited' | 'linkless';
+    email?: string;
     reliabilityHistory: ReliabilityEvent[]; // Decay model history
     viceCaptain?: boolean;
     isAdmin?: boolean;

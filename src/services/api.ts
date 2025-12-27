@@ -111,7 +111,10 @@ class ApiService {
                     // Actually, the Manager creates 'players' array. Does he add himself?
                     // Usually yes. But let's assume if it's the manager (index 0 usually, or by name match), use root nationality.
                     // For simplicity, let's look for a name match with `parsed.data.playerName`.
+                    // Usually yes. But let's assume if it's the manager (index 0 usually, or by name match), use root nationality.
+                    // For simplicity, let's look for a name match with `parsed.data.playerName`.
                     nationality: (p.name === parsed.data?.playerName) ? (parsed.data?.playerNationality || 'gb-eng') : 'gb-eng',
+                    status: (p.name === parsed.data?.playerName) ? 'active' : 'linkless',
                     preferredFoot: 'Right',
                     captain: !!p.captain,
                     reliability: 100, // New team = 100%

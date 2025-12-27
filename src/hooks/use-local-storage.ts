@@ -3,7 +3,10 @@ import { useState, useEffect } from 'react';
 export function useLocalStorage<T>(key: string, initialValue: T) {
     const [storedValue, setStoredValue] = useState<T>(initialValue);
 
+    const [isLoaded, setIsLoaded] = useState(false);
+
     useEffect(() => {
+        // Prevent hydration mismatch by only reading after mount
         try {
             const item = window.localStorage.getItem(key);
             if (item) {
@@ -11,6 +14,8 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
             }
         } catch (error) {
             console.error(error);
+        } finally {
+            setIsLoaded(true);
         }
     }, [key]);
 
@@ -26,5 +31,5 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
         }
     };
 
-    return [storedValue, setValue] as const;
+    return [storedValue, setValue, isLoaded] as const;
 }

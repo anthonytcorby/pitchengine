@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, Suspense } from 'react';
 
 function OnboardingContent() {
-    const { state, setRole, updateData, nextStep, prevStep, setStep, completeOnboarding, resetOnboarding } = useOnboarding();
+    const { state, setRole, updateData, nextStep, prevStep, setStep, completeOnboarding, resetOnboarding, isLoaded } = useOnboarding();
     const router = useRouter();
 
     const searchParams = useSearchParams();
@@ -14,19 +14,21 @@ function OnboardingContent() {
 
     // Reset onboarding if mode=create
     useEffect(() => {
-        if (mode === 'create') {
+        if (mode === 'create' && isLoaded) { // Only reset if we know we loaded (avoids race with reading storage)
             resetOnboarding();
         }
-    }, [mode, resetOnboarding]);
+    }, [mode, resetOnboarding, isLoaded]);
 
     // Check completion (only if NOT in create mode or after reset)
     useEffect(() => {
         // If we are in create mode, we shouldn't redirect even if state says completed 
         // (though resetOnboarding should handle this, the React state update might lag slightly)
-        if (state.completed && mode !== 'create') {
+        if (isLoaded && state.completed && mode !== 'create') {
             router.push('/dashboard');
         }
-    }, [state.completed, router, mode]);
+    }, [state.completed, router, mode, isLoaded]);
+
+    if (!isLoaded) return <div className="min-h-screen bg-black flex items-center justify-center text-wts-green font-mono text-xs">LOADING...</div>;
 
     return (
         <OnboardingSteps

@@ -55,7 +55,7 @@ const INITIAL_STATE: OnboardingState = {
 };
 
 export function useOnboarding() {
-    const [state, setState] = useLocalStorage<OnboardingState>('wts-onboarding-progress', INITIAL_STATE);
+    const [state, setState, isLoaded] = useLocalStorage<OnboardingState>('wts-onboarding-progress', INITIAL_STATE);
 
     const setRole = (role: OnboardingRole) => {
         setState((prev) => ({
@@ -111,6 +111,7 @@ export function useOnboarding() {
         prevStep,
         setStep,
         completeOnboarding,
-        resetOnboarding
+        resetOnboarding,
+        isLoaded
     };
 }
