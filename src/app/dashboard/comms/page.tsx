@@ -1,110 +1,25 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
     MessageSquare, Pin, Search, Filter, Check, CheckCheck,
-    Bell, Calendar, Shield, Info, Plus, ChevronRight, User, MoreHorizontal, X, Send
+    Bell, Calendar, Shield, Info, Plus, ChevronRight, User, MoreHorizontal, X, Send, Trash2
 } from 'lucide-react';
+import { useMessages, Message, MessageType, MessageStatus } from '@/hooks/use-messages';
 
-// --- Types ---
 
-type MessageType = 'announcement' | 'fixture' | 'system' | 'dm';
-type MessageStatus = 'read' | 'unread';
-
-interface Message {
-    id: string;
-    type: MessageType;
-    status: MessageStatus;
-    sender: {
-        name: string;
-        role: string;
-        avatar?: string;
-    };
-    subject: string;
-    preview: string;
-    content: string; // HTML or rich text for now just string
-    timestamp: string;
-    isPinned?: boolean;
-    meta?: {
-        fixtureId?: string;
-        location?: string;
-        weather?: string;
-        matchFee?: number;
-    };
-    readCount?: number;
-    total?: number;
-}
-
-// --- Mock Data ---
-
-const MOCK_MESSAGES: Message[] = [
-    {
-        id: '1',
-        type: 'fixture',
-        status: 'unread',
-        sender: { name: 'Fixture Bot', role: 'System' },
-        subject: 'MATCHDAY: vs Red Star FC',
-        preview: 'Kickoff 14:00 • Hackney Marshes',
-        content: '', // Content rendered by component based on type
-        timestamp: '10:30 AM',
-        isPinned: true,
-        meta: {
-            location: 'Hackney Marshes',
-            weather: 'Rain likely',
-            matchFee: 5
-        }
-    },
-    {
-        id: '2',
-        type: 'announcement',
-        status: 'read',
-        sender: { name: 'Anthony Corby', role: 'Manager' },
-        subject: 'Training Cancelled - Waterlogged Pitch',
-        preview: 'Guys, pitch is completely flooded. No training tonight.',
-        content: 'Guys, pitch is completely flooded. No training tonight. Rest up and we go again on Sunday. Please confirm availability for the weekend by tomorrow 5pm.',
-        timestamp: 'Yesterday',
-        readCount: 12,
-        total: 15
-    },
-    {
-        id: '3',
-        type: 'system',
-        status: 'unread',
-        sender: { name: 'Automated System', role: 'Admin' },
-        subject: 'Match Fees Overdue',
-        preview: 'You have 2 outstanding match fees.',
-        content: 'Please settle your outstanding balance of £10.00 immediately to remain available for selection.',
-        timestamp: 'Yesterday'
-    },
-    {
-        id: '4',
-        type: 'dm',
-        status: 'read',
-        sender: { name: 'Marcus Richards', role: 'Player' },
-        subject: 'Weekend Availability',
-        preview: 'I might be late for kickoff, working...',
-        content: 'I might be late for kickoff, working a morning shift. Should be there by 1:30 latest.',
-        timestamp: 'Tue'
-    },
-    {
-        id: '5',
-        type: 'announcement',
-        status: 'read',
-        sender: { name: 'Anthony Corby', role: 'Manager' },
-        subject: 'Squad Selection vs Athletic FC',
-        preview: 'Starting XI has been posted. Check the...',
-        content: 'Starting XI has been posted. Check the Matchday tab for details. Big game, need everyone focused.',
-        timestamp: 'Mon',
-        readCount: 14,
-        total: 15
-    }
-];
 
 export default function CommsPage() {
-    const [messages, setMessages] = useState<Message[]>(MOCK_MESSAGES);
+    const { messages, addMessage, deleteMessage, markAsRead } = useMessages();
     const [activeFilter, setActiveFilter] = useState<MessageType | 'all'>('all');
-    const [selectedMessageId, setSelectedMessageId] = useState<string | null>(MOCK_MESSAGES[0].id);
+    const [selectedMessageId, setSelectedMessageId] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
+
+    useEffect(() => {
+        if (!selectedMessageId && messages.length > 0) {
+            setSelectedMessageId(messages[0].id);
+        }
+    }, [messages, selectedMessageId]);
 
     // Compose State
     const [isComposeOpen, setIsComposeOpen] = useState(false);
@@ -133,10 +48,10 @@ export default function CommsPage() {
         e.preventDefault();
 
         const newMsg: Message = {
-            id: (messages.length + 1).toString(),
+            id: Date.now().toString(),
             type: newMessage.type,
-            status: 'read', // Sender sees it as "read" or irrelevant
-            sender: { name: 'Anthony Corby', role: 'Manager' }, // Hardcoded curr user
+            status: 'read',
+            sender: { name: 'Anthony Corby', role: 'Manager' },
             subject: newMessage.type === 'fixture'
                 ? `MATCHDAY: vs ${newMessage.opponent}`
                 : (newMessage.subject || 'No Subject'),
@@ -147,14 +62,14 @@ export default function CommsPage() {
             timestamp: 'Just now',
             isPinned: newMessage.isPinned,
             readCount: 0,
-            total: 15, // Mock total squad size
+            total: 15,
             meta: newMessage.type === 'fixture' ? {
                 location: newMessage.venue,
                 matchFee: parseFloat(newMessage.matchFee) || 0
             } : undefined
         };
 
-        setMessages([newMsg, ...messages]);
+        addMessage(newMsg);
         setSelectedMessageId(newMsg.id);
         setIsComposeOpen(false);
         setNewMessage({
@@ -452,6 +367,18 @@ export default function CommsPage() {
                             <div className="flex items-center space-x-2">
                                 <button className="p-2 hover:bg-white/10 rounded-lg text-gray-400 hover:text-white transition-colors">
                                     <MoreHorizontal size={20} />
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        if (confirm('Delete message?')) {
+                                            deleteMessage(selectedMessage.id);
+                                            setSelectedMessageId(null);
+                                        }
+                                    }}
+                                    className="p-2 hover:bg-red-500/20 rounded-lg text-gray-400 hover:text-red-500 transition-colors"
+                                    title="Delete Message"
+                                >
+                                    <Trash2 size={20} />
                                 </button>
                             </div>
                         </div>

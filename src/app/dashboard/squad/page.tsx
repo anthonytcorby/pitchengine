@@ -186,22 +186,10 @@ export default function SquadPage() {
             : <ArrowDown size={12} className="text-wts-green" />;
     };
 
-    // Invite Form State
-    const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
-    const [inviteName, setInviteName] = useState('');
-    const [inviteEmail, setInviteEmail] = useState('');
-    const [inviteRole, setInviteRole] = useState<Role>('CM');
-    const [inviteMessage, setInviteMessage] = useState('');
-
-    const handleInvitePlayer = (e: React.FormEvent) => {
-        e.preventDefault();
+    // Invite Handler (passed to PlayerModal)
+    const handleInvitePlayer = (email: string, message: string) => {
         // Simulate sending invite
-        alert(`Invite sent to ${inviteEmail} for ${inviteName}!`);
-        setIsInviteModalOpen(false);
-        setInviteName('');
-        setInviteEmail('');
-        setInviteRole('CM');
-        setInviteMessage('');
+        alert(`Invite sent to ${email}!\n\nMessage: ${message}`);
     };
 
     // Helper to get reliability color (1-5 scale logic, but currently logic is 0-100)
@@ -216,94 +204,16 @@ export default function SquadPage() {
     return (
         <div className="space-y-6 max-w-[1400px] mx-auto relative">
 
-            {/* Edit Player Modal */}
+            {/* Edit Player Modal (Unified) */}
             <PlayerModal
                 isOpen={!!editingPlayer}
                 onClose={() => setEditingPlayer(null)}
                 player={editingPlayer}
+                teamName={team?.name}
                 onSave={handleUpdatePlayer}
                 onRelease={handleReleasePlayer}
+                onInvite={handleInvitePlayer}
             />
-
-            {/* Invite Player Modal */}
-            {isInviteModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-                    <div className="bg-[#0A0A0A] border border-white/10 rounded-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200 shadow-2xl">
-                        <div className="p-6 border-b border-white/5 flex items-center justify-between">
-                            <div>
-                                <h3 className="text-xl font-display font-bold italic text-white uppercase tracking-tighter">Invite Player</h3>
-                                <p className="text-[10px] text-gray-500 font-mono uppercase tracking-widest mt-1">Send an invitation email</p>
-                            </div>
-                            <button onClick={() => setIsInviteModalOpen(false)} className="text-gray-500 hover:text-white transition-colors">
-                                <X size={20} />
-                            </button>
-                        </div>
-                        <form onSubmit={handleInvitePlayer} className="p-6 space-y-5">
-                            <div className="space-y-2">
-                                <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">Full Name</label>
-                                <input
-                                    type="text"
-                                    value={inviteName}
-                                    onChange={(e) => setInviteName(e.target.value)}
-                                    className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-wts-green/50"
-                                    placeholder="e.g. Jamie Tartt"
-                                    required
-                                    autoFocus
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">Email Address</label>
-                                <input
-                                    type="email"
-                                    value={inviteEmail}
-                                    onChange={(e) => setInviteEmail(e.target.value)}
-                                    className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-wts-green/50"
-                                    placeholder="jamie@example.com"
-                                    required
-                                />
-                            </div>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                    <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">Role</label>
-                                    <select
-                                        value={inviteRole}
-                                        onChange={(e) => setInviteRole(e.target.value as Role)}
-                                        className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-wts-green/50"
-                                    >
-                                        {['GK', 'CB', 'LB', 'RB', 'CDM', 'CM', 'CAM', 'LM', 'RM', 'LW', 'RW', 'ST'].map(role => (
-                                            <option key={role} value={role}>{role}</option>
-                                        ))}
-                                    </select>
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">Team</label>
-                                    <input
-                                        type="text"
-                                        value={team?.name || "PITCHENGINE FC"}
-                                        disabled
-                                        className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-gray-400 cursor-not-allowed"
-                                    />
-                                </div>
-                            </div>
-                            <div className="space-y-2">
-                                <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">Message (Optional)</label>
-                                <textarea
-                                    value={inviteMessage}
-                                    onChange={(e) => setInviteMessage(e.target.value)}
-                                    className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-wts-green/50 min-h-[80px]"
-                                    placeholder="Join our squad for the upcoming season..."
-                                />
-                            </div>
-                            <div className="pt-4">
-                                <button type="submit" className="w-full bg-wts-green text-black font-bold uppercase tracking-widest py-4 rounded-lg hover:bg-white transition-colors flex items-center justify-center space-x-2">
-                                    <Mail size={18} />
-                                    <span>Send Invite</span>
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            )}
 
             {/* Add Player Modal */}
             {isAddModalOpen && (
@@ -414,13 +324,6 @@ export default function SquadPage() {
                     </div>
 
                     <button
-                        onClick={() => setIsInviteModalOpen(true)}
-                        className="bg-black/40 text-white border border-white/10 hover:bg-white/10 px-6 py-4 rounded-xl font-bold uppercase tracking-widest text-sm flex items-center space-x-3 shadow-lg transition-all"
-                    >
-                        <Mail size={18} className="text-wts-green" />
-                        <span className="hidden sm:inline">Invite</span>
-                    </button>
-                    <button
                         onClick={() => setIsAddModalOpen(true)}
                         className="bg-black/40 text-white border border-white/10 hover:bg-white/10 px-6 py-4 rounded-xl font-bold uppercase tracking-widest text-sm flex items-center space-x-3 shadow-lg transition-all"
                     >
@@ -464,19 +367,7 @@ export default function SquadPage() {
                             <div
                                 key={player.id}
                                 className={`grid grid-flow-col auto-cols-[minmax(0,_1fr)] gap-4 p-4 border-b border-white/5 hover:bg-white/5 transition-colors group cursor-pointer ${player.status === 'linkless' ? 'opacity-70 hover:opacity-100 bg-white/[0.02]' : ''}`}
-                                onClick={() => {
-                                    if (player.status === 'linkless') {
-                                        setInviteName(player.name);
-                                        setInviteRole(player.position || 'CM');
-                                        setInviteEmail('');
-                                        const firstName = player.name.split(' ')[0]; // Get first name
-                                        const clubName = team?.name || 'Pitch Engine';
-                                        setInviteMessage(`Hey ${formatName(firstName)} come join ${clubName} over at Pitch Engine`);
-                                        setIsInviteModalOpen(true);
-                                    } else {
-                                        setEditingPlayer(player);
-                                    }
-                                }}
+                                onClick={() => setEditingPlayer(player)}
                             >
                                 {ALL_COLUMNS.map(col => {
                                     if (!visibleColumns.has(col.id)) return null;

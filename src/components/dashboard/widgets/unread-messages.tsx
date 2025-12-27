@@ -3,38 +3,42 @@
 import { MessageSquare, Bell } from 'lucide-react';
 import Link from 'next/link';
 import { useLanguage } from '@/hooks/use-language';
+import { useMessages } from '@/hooks/use-messages';
 
 export function UnreadMessagesWidget() {
     const { t } = useLanguage();
-    const unreadCount = 3;
-    const latestMessage = {
-        author: 'Alex (Vice Captain)',
-        text: 'Lads, are we doing drinks after the game on Tuesday?',
-        time: '2h ago'
-    };
+    const { messages } = useMessages();
+
+    const unreadCount = messages.filter(m => m.status === 'unread').length;
+    const latestMessage = messages.length > 0 ? messages[0] : null;
 
     return (
-        <div className="bg-black/40 border border-white/5 rounded-2xl p-6 group hover:border-blue-500/30 transition-all duration-300 relative overflow-hidden">
-
+        <div className="bg-black/40 border border-white/5 rounded-2xl p-6 group hover:border-blue-500/30 transition-all duration-300 relative overflow-hidden h-full flex flex-col justify-between">
             <div className="flex items-center justify-between mb-4">
                 <span className="text-[9px] font-bold text-blue-400 uppercase tracking-[0.2em]">{t('dashboard.widgets.team_comms')}</span>
                 {unreadCount > 0 && (
-                    <span className="px-2 py-0.5 bg-blue-500 text-black text-[9px] font-bold rounded-full">
+                    <span className="px-2 py-0.5 bg-blue-500 text-black text-[9px] font-bold rounded-full animate-in zoom-in">
                         {unreadCount} {t('dashboard.widgets.new_msg')}
                     </span>
                 )}
             </div>
 
             <div className="space-y-4">
-                <div className="bg-white/5 rounded-xl p-4 border-l-2 border-blue-500 relative">
-                    <div className="flex items-center justify-between mb-2">
-                        <span className="text-[10px] font-bold text-wts-green uppercase tracking-wider">{latestMessage.author}</span>
-                        <span className="text-[9px] text-gray-500">{latestMessage.time}</span>
+                {latestMessage ? (
+                    <div className="bg-white/5 rounded-xl p-4 border-l-2 border-blue-500 relative">
+                        <div className="flex items-center justify-between mb-2">
+                            <span className="text-[10px] font-bold text-wts-green uppercase tracking-wider">{latestMessage.sender.name}</span>
+                            <span className="text-[9px] text-gray-500">{latestMessage.timestamp}</span>
+                        </div>
+                        <p className="text-sm text-gray-300 font-medium leading-relaxed line-clamp-2">
+                            "{latestMessage.preview}"
+                        </p>
                     </div>
-                    <p className="text-sm text-gray-300 font-medium leading-relaxed line-clamp-2">
-                        "{latestMessage.text}"
-                    </p>
-                </div>
+                ) : (
+                    <div className="text-center py-4 text-gray-600 text-xs italic">
+                        No messages received.
+                    </div>
+                )}
 
                 <div className="flex justify-end">
                     <Link href="/dashboard/comms" className="text-[10px] font-bold text-gray-500 uppercase tracking-widest hover:text-white transition-colors">

@@ -1,5 +1,5 @@
 import { User, Team, Player, Fixture, Availability, Fee, Tactic, AuditLog, Notification } from '../types/schema';
-import { TEAMSHEET, MATCH_DATA } from '../lib/mock-data';
+import { TEAMSHEET } from '../lib/mock-data';
 import { auth, INTERNAL_TEST_MODE } from '@/lib/firebase';
 import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
 import { createUserProfile, getUserTeams, createTeam, getTeamMatches, setAvailability } from '@/lib/db';
@@ -80,7 +80,8 @@ class ApiService {
                         primaryColor: '#000000',
                         secondaryColor: '#ffffff',
                         defaultFee: 5,
-                        feeGenerationMode: 'creation'
+                        feeGenerationMode: 'creation',
+                        teamSize: parsed.data.teamSize
                     };
                 }
             }
@@ -138,17 +139,16 @@ class ApiService {
 
             if (permanentStored) {
                 // If we have permanent data, use it directly. This is the source of truth after onboarding.
-                onboardingPlayers = JSON.parse(permanentStored);
-                // In permanent storage, manager is already in the list (usually index 0)
-            } else {
-                // Fallback to onboarding progress (during onboarding)
-                const stored = localStorage.getItem('wts-onboarding-progress-v2'); // Use v2 key from recent fix
-                if (stored) {
-                    const parsed = JSON.parse(stored);
-                    onboardingPlayers = parsed.data?.players || [];
-                    managerName = parsed.data?.playerName;
-                    managerNationality = parsed.data?.playerNationality;
-                }
+                return JSON.parse(permanentStored);
+            }
+
+            // Fallback to onboarding progress (during onboarding)
+            const stored = localStorage.getItem('wts-onboarding-progress-v2'); // Use v2 key from recent fix
+            if (stored) {
+                const parsed = JSON.parse(stored);
+                onboardingPlayers = parsed.data?.players || [];
+                managerName = parsed.data?.playerName;
+                managerNationality = parsed.data?.playerNationality;
             }
 
             if (onboardingPlayers.length > 0) {
@@ -169,7 +169,9 @@ class ApiService {
                     attendance: 100,
                     preferred: false,
                     reliabilityHistory: [],
-                    stats: { appearances: 0, goals: 0, assists: 0, yellowCards: 0, redCards: 0, motm: 0 }
+                    stats: { appearances: 0, goals: 0, assists: 0, yellowCards: 0, redCards: 0, motm: 0 },
+                    // Default Fees: PAID and £0
+                    fees: { status: 'paid', amount: 0 } as any
                 }));
             }
         } catch (e) {
@@ -192,14 +194,33 @@ class ApiService {
     // --- WRITE ---
 
     async createPlayer(player: Omit<Player, 'id' | 'teamId'>): Promise<Player> {
-        return { ...player, id: 'new-player', teamId: 'team-wts' } as Player;
+        const newPlayer = { ...player, id: `p-${Date.now()}`, teamId: 'team-wts' } as Player;
+
+        if (typeof window !== 'undefined') {
+            const currentSquad = await this.getSquad('team-wts');
+            const updatedSquad = [...currentSquad, newPlayer];
+            localStorage.setItem('wts-squad-data', JSON.stringify(updatedSquad));
+            // Trigger update event if needed, but getSquad usually re-reads
+        }
+
+        return newPlayer;
     }
 
     async updatePlayer(player: Player): Promise<Player> {
+        if (typeof window !== 'undefined') {
+            const currentSquad = await this.getSquad(player.teamId);
+            const updatedSquad = currentSquad.map(p => p.id === player.id ? player : p);
+            localStorage.setItem('wts-squad-data', JSON.stringify(updatedSquad));
+        }
         return player;
     }
 
     async deletePlayer(playerId: string): Promise<void> {
+        if (typeof window !== 'undefined') {
+            const currentSquad = await this.getSquad('team-wts');
+            const updatedSquad = currentSquad.filter(p => p.id !== playerId);
+            localStorage.setItem('wts-squad-data', JSON.stringify(updatedSquad));
+        }
         return;
     }
 

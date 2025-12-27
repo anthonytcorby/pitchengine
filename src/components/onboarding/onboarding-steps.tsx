@@ -168,7 +168,9 @@ export function OnboardingSteps({ currentStep, role, data, onSetRole, onUpdate, 
 
         const handleAdd = () => {
             if (newName.trim()) {
-                onUpdate({ players: [...data.players, { name: formatName(newName), position: 'MID' }] });
+                const posSelect = document.getElementById('position-select') as HTMLSelectElement;
+                const position = posSelect ? posSelect.value : 'MID';
+                onUpdate({ players: [...data.players, { name: formatName(newName), position: position }] });
                 setNewName('');
             }
         };
@@ -199,6 +201,15 @@ export function OnboardingSteps({ currentStep, role, data, onSetRole, onUpdate, 
                             className="flex-1 bg-black/50 border border-white/10 focus:border-wts-green rounded-xl px-4 py-3 text-white placeholder-gray-700 outline-none transition-colors font-bold uppercase tracking-wide"
                             autoFocus
                         />
+                        <select
+                            id="position-select"
+                            className="bg-black/50 border border-white/10 focus:border-wts-green rounded-xl px-4 py-3 text-white outline-none transition-colors font-bold uppercase tracking-wide"
+                        >
+                            <option value="GK">GK</option>
+                            <option value="DEF">DEF</option>
+                            <option value="MID">MID</option>
+                            <option value="FWD">FWD</option>
+                        </select>
                         <button
                             onClick={handleAdd}
                             className="px-4 py-3 bg-white/10 border border-white/10 rounded-xl hover:bg-white/20 text-white transition-colors"
@@ -215,7 +226,10 @@ export function OnboardingSteps({ currentStep, role, data, onSetRole, onUpdate, 
                         )}
                         {data.players.map((p, i) => (
                             <div key={i} className="flex items-center justify-between p-3 bg-white/5 border border-white/5 rounded-lg group animate-in slide-in-from-left-2">
-                                <span className="font-bold text-sm uppercase">{p.name}</span>
+                                <div className="flex items-center gap-3">
+                                    <span className="text-xs font-mono font-bold text-wts-green bg-wts-green/10 px-2 py-1 rounded">{p.position}</span>
+                                    <span className="font-bold text-sm uppercase">{p.name}</span>
+                                </div>
                                 <button onClick={() => handleRemove(i)} className="text-gray-600 hover:text-red-500 transition-colors">
                                     <X size={16} />
                                 </button>
@@ -324,7 +338,8 @@ export function OnboardingSteps({ currentStep, role, data, onSetRole, onUpdate, 
                         name: data.clubName || 'My Club', // Fallback
                         managerId: 'user-1', // Mock ID matched in api
                         primaryColor: '#000000',
-                        secondaryColor: '#ffffff'
+                        secondaryColor: '#ffffff',
+                        teamSize: data.teamSize // Save team size from onboarding
                     };
                     window.localStorage.setItem('wts-team-data', JSON.stringify(teamData));
                 }
