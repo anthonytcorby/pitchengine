@@ -13,6 +13,7 @@ import { MatchDefaultsScreen } from './screens/match-defaults-screen';
 import { PaywallScreen } from './screens/paywall-screen';
 import { LanguageSelectionScreen } from './screens/language-selection-screen';
 import { TacticsPreviewScreen } from './screens/tactics-preview-screen';
+import { CountryAutocomplete } from '@/components/ui/country-autocomplete';
 
 interface OnboardingStepsProps {
     currentStep: number;
