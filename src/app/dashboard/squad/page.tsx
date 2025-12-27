@@ -5,7 +5,7 @@ import { Users, Star, Clock, Shield, ArrowUpDown, ArrowUp, ArrowDown, X, Plus, M
 import { PlayerModal } from '@/components/dashboard/player-modal';
 import Image from 'next/image';
 import { api } from '@/services/api';
-import { Player, Role } from '@/types/schema';
+import { Player, Role, Team } from '@/types/schema';
 import { formatName } from '@/lib/utils';
 
 type SortKey = 'number' | 'name' | 'nationality' | 'role' | 'attendance' | 'reliability' | 'preferredFoot' | 'captain' | 'stats.appearances' | 'stats.goals' | 'stats.assists' | 'stats.yellowCards' | 'stats.redCards' | 'stats.motm';
@@ -44,6 +44,7 @@ export default function SquadPage() {
     });
 
     const [players, setPlayers] = useState<Player[]>([]);
+    const [team, setTeam] = useState<Team | null>(null);
     const [editingPlayer, setEditingPlayer] = useState<Player | null>(null);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [isViewMenuOpen, setIsViewMenuOpen] = useState(false);
@@ -59,12 +60,20 @@ export default function SquadPage() {
 
     // Load Data
     useEffect(() => {
-        const loadSquad = async () => {
+        const loadData = async () => {
             // Hardcoded teamId for now as per Mock/Simple implementation
-            const squad = await api.getSquad('team-wts');
-            setPlayers(squad);
+            try {
+                const [squad, teamData] = await Promise.all([
+                    api.getSquad('team-wts'),
+                    api.getTeam('team-wts')
+                ]);
+                setPlayers(squad);
+                setTeam(teamData);
+            } catch (e) {
+                console.error("Failed to load squad page data", e);
+            }
         };
-        loadSquad();
+        loadData();
     }, []);
 
     const toggleColumn = (colId: ColumnId) => {
@@ -270,7 +279,7 @@ export default function SquadPage() {
                                     <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">Team</label>
                                     <input
                                         type="text"
-                                        value="PITCHENGINE FC"
+                                        value={team?.name || "PITCHENGINE FC"}
                                         disabled
                                         className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-gray-400 cursor-not-allowed"
                                     />
@@ -460,7 +469,9 @@ export default function SquadPage() {
                                         setInviteName(player.name);
                                         setInviteRole(player.position || 'CM');
                                         setInviteEmail('');
-                                        setInviteMessage(`Hey ${player.name}, join us on WorkTheSpace!`);
+                                        const firstName = player.name.split(' ')[0]; // Get first name
+                                        const clubName = team?.name || 'Pitch Engine';
+                                        setInviteMessage(`Hey ${formatName(firstName)} come join ${clubName} over at Pitch Engine`);
                                         setIsInviteModalOpen(true);
                                     } else {
                                         setEditingPlayer(player);
