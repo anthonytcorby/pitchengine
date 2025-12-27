@@ -9,7 +9,7 @@ import { useLocalStorage } from '@/hooks/use-local-storage';
 import { api } from '@/services/api';
 import { Player } from '@/types/schema';
 import { ConfirmSquadModal } from '@/components/dashboard/confirm-squad-modal';
-import { MATCH_DATA } from '@/lib/mock-data';
+
 import { getFormationsForSize } from '@/lib/formations';
 
 // Simple type for formation positions
@@ -565,7 +565,13 @@ export default function TacticsPage() {
                 isOpen={isConfirmModalOpen}
                 onClose={() => setIsConfirmModalOpen(false)}
                 onConfirm={executeConfirmSquad}
-                matchDetails={MATCH_DATA}
+                matchDetails={{
+                    opponent: 'Next Opponent',
+                    competition: 'League Match',
+                    venue: 'Home',
+                    date: 'Upcoming',
+                    time: '15:00'
+                }}
             />
         </div>
     );
