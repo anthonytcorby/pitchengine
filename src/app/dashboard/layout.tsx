@@ -56,7 +56,23 @@ export default function DashboardLayout({
                 setIsLoading(false);
             }
         };
+
         loadData();
+
+        // Listen for real-time team stats updates
+        const handleTeamUpdate = () => {
+            loadData();
+        };
+
+        if (typeof window !== 'undefined') {
+            window.addEventListener('team-update', handleTeamUpdate);
+        }
+
+        return () => {
+            if (typeof window !== 'undefined') {
+                window.removeEventListener('team-update', handleTeamUpdate);
+            }
+        };
     }, [router]);
 
     // Helper to get initials

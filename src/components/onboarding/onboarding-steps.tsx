@@ -317,6 +317,16 @@ export function OnboardingSteps({ currentStep, role, data, onSetRole, onUpdate, 
                 // We use a separate key 'wts-squad-data' for the roster
                 if (typeof window !== 'undefined') {
                     window.localStorage.setItem('wts-squad-data', JSON.stringify(finalPlayers));
+
+                    // Save Team Data (Club Name)
+                    const teamData = {
+                        id: 'team-wts',
+                        name: data.clubName || 'My Club', // Fallback
+                        managerId: 'user-1', // Mock ID matched in api
+                        primaryColor: '#000000',
+                        secondaryColor: '#ffffff'
+                    };
+                    window.localStorage.setItem('wts-team-data', JSON.stringify(teamData));
                 }
 
                 onUpdate({ players: finalPlayers });

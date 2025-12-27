@@ -61,6 +61,31 @@ class ApiService {
         // So strict helper usage might be tricky without modifying method signatures.
         // We'll stick to mock for getTeam temporarily OR assume we can fetch all and filter.
         // Actually, db.ts is missing `getTeamById`. I will skip replacing this specific one to avoid over-engineering beyond the prompt's requested helpers.
+        // Try reading from permanent storage first
+        if (typeof window !== 'undefined') {
+            const stored = localStorage.getItem('wts-team-data');
+            if (stored) {
+                return JSON.parse(stored);
+            }
+
+            // Fallback to onboarding V2 if we are mid-onboarding or just finished
+            const onboarding = localStorage.getItem('wts-onboarding-progress-v2');
+            if (onboarding) {
+                const parsed = JSON.parse(onboarding);
+                if (parsed.data?.clubName) {
+                    return {
+                        id: teamId,
+                        name: parsed.data.clubName,
+                        managerId: 'user-1',
+                        primaryColor: '#000000',
+                        secondaryColor: '#ffffff',
+                        defaultFee: 5,
+                        feeGenerationMode: 'creation'
+                    };
+                }
+            }
+        }
+
         return {
             id: teamId,
             name: 'PITCH ENGINE',
@@ -73,16 +98,31 @@ class ApiService {
     }
 
     async updateTeam(teamId: string, data: Partial<Team>): Promise<Team> {
-        return {
-            id: teamId,
-            name: 'PITCH ENGINE',
-            managerId: 'user-1',
-            primaryColor: '#000000',
-            secondaryColor: '#ffffff',
-            defaultFee: 5,
-            feeGenerationMode: 'creation',
-            ...data
-        };
+        // Read current state
+        let currentTeam = await this.getTeam(teamId);
+        if (!currentTeam) {
+            currentTeam = {
+                id: teamId,
+                name: 'PITCH ENGINE',
+                managerId: 'user-1',
+                primaryColor: '#000000',
+                secondaryColor: '#ffffff',
+                defaultFee: 5,
+                feeGenerationMode: 'creation',
+                subscriptionStatus: 'active',
+                subscriptionPlan: 'pro'
+            } as Team;
+        }
+
+        const updatedTeam = { ...currentTeam, ...data };
+
+        if (typeof window !== 'undefined') {
+            localStorage.setItem('wts-team-data', JSON.stringify(updatedTeam));
+            // Dispatch custom event for real-time updates
+            window.dispatchEvent(new Event('team-update'));
+        }
+
+        return updatedTeam;
     }
 
     async getSquad(teamId: string): Promise<Player[]> {
