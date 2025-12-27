@@ -230,6 +230,7 @@ export default function TacticsPage() {
     };
 
     // Validate Lineup against Squad (Clean up stale IDs)
+    /*
     useEffect(() => {
         if (squad.length === 0) return;
 
@@ -259,6 +260,7 @@ export default function TacticsPage() {
             setSubs(newSubs);
         }
     }, [squad, lineup, subs, setLineup, setSubs]);
+    */
 
 
     const isCompatiblePos = (playerPos: string, slotRole: string) => {
@@ -508,14 +510,14 @@ export default function TacticsPage() {
                                         >
                                             {subPlayer ? (
                                                 <>
-                                                    <div className="flex items-center space-x-3">
+                                                    <div className="flex items-center space-x-3 pointer-events-none">
                                                         <span className="text-xs font-mono text-gray-500 w-4">S{i + 1}</span>
                                                         <span className="text-xs font-bold text-gray-300 group-hover:text-white">{subPlayer.name}</span>
                                                     </div>
-                                                    <span className="text-[9px] font-bold text-wts-green uppercase">{subPlayer.position}</span>
+                                                    <span className="text-[9px] font-bold text-wts-green uppercase pointer-events-none">{subPlayer.position}</span>
                                                 </>
                                             ) : (
-                                                <div className="flex items-center space-x-3 w-full py-1 opacity-50">
+                                                <div className="flex items-center space-x-3 w-full py-1 opacity-50 pointer-events-none">
                                                     <span className="text-xs font-mono text-gray-600 w-4">S{i + 1}</span>
                                                     <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500">Empty Slot</span>
                                                 </div>
@@ -549,11 +551,11 @@ export default function TacticsPage() {
                                                 }}
                                                 className={`flex items-center justify-between p-2.5 rounded-xl border transition-all ${player ? 'bg-white/5 border-white/5' : 'bg-black/20 border-dashed border-white/10'}`}
                                             >
-                                                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">{type.label}</span>
+                                                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide pointer-events-none">{type.label}</span>
                                                 {player ? (
-                                                    <span className="text-xs font-bold text-white">{player.name}</span>
+                                                    <span className="text-xs font-bold text-white pointer-events-none">{player.name}</span>
                                                 ) : (
-                                                    <span className="text-[10px] text-gray-600 font-bold uppercase">Empty Slot</span>
+                                                    <span className="text-[10px] text-gray-600 font-bold uppercase pointer-events-none">Empty Slot</span>
                                                 )}
                                             </div>
                                         );
@@ -580,7 +582,7 @@ export default function TacticsPage() {
                                             }}
                                             className={`flex items-center justify-between p-2 rounded-xl border transition-all ${player ? 'bg-white/5 border-white/5' : 'bg-black/20 border-dashed border-white/10'}`}
                                         >
-                                            <div className="flex items-center space-x-3 w-full">
+                                            <div className="flex items-center space-x-3 w-full pointer-events-none">
                                                 <span className="w-5 h-5 flex items-center justify-center bg-wts-green/10 text-wts-green text-[10px] font-bold rounded-md">{order}</span>
                                                 {player ? (
                                                     <span className="text-xs font-bold text-white">{player.name}</span>
