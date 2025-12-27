@@ -90,12 +90,28 @@ class ApiService {
 
         try {
             // Read from Onboarding storage as the "source of truth" for this prototype
-            const stored = localStorage.getItem('wts-onboarding-progress');
-            if (stored) {
-                const parsed = JSON.parse(stored);
-                // Onboarding state shape: { step, role, completed, data: { players: [...] } }
-                const onboardingPlayers = parsed.data?.players || [];
+            // NEW: Try reading from permanent squad data first (post-onboarding)
+            const permanentStored = localStorage.getItem('wts-squad-data');
+            let onboardingPlayers = [];
+            let managerName = '';
+            let managerNationality = 'gb-eng';
 
+            if (permanentStored) {
+                // If we have permanent data, use it directly. This is the source of truth after onboarding.
+                onboardingPlayers = JSON.parse(permanentStored);
+                // In permanent storage, manager is already in the list (usually index 0)
+            } else {
+                // Fallback to onboarding progress (during onboarding)
+                const stored = localStorage.getItem('wts-onboarding-progress-v2'); // Use v2 key from recent fix
+                if (stored) {
+                    const parsed = JSON.parse(stored);
+                    onboardingPlayers = parsed.data?.players || [];
+                    managerName = parsed.data?.playerName;
+                    managerNationality = parsed.data?.playerNationality;
+                }
+            }
+
+            if (onboardingPlayers.length > 0) {
                 // Map to Schema Player
                 return onboardingPlayers.map((p: any, index: number) => ({
                     id: `p-${index}`, // Simple ID generation
@@ -105,16 +121,8 @@ class ApiService {
                     role: (p.position || 'MID') as any, // Cast to Role
                     position: (p.position || 'MID') as any,
                     // Use stored nationality if available (mostly for 'Me' player), otherwise default. 
-                    // Note: Managers name is stored in playerName/playerNationality at root, 
-                    // but 'players' array items might not have it unless we sync it.
-                    // For the MANAGER (who is usually the first player or separate), we check if this player matches the manager name.
-                    // Actually, the Manager creates 'players' array. Does he add himself?
-                    // Usually yes. But let's assume if it's the manager (index 0 usually, or by name match), use root nationality.
-                    // For simplicity, let's look for a name match with `parsed.data.playerName`.
-                    // Usually yes. But let's assume if it's the manager (index 0 usually, or by name match), use root nationality.
-                    // For simplicity, let's look for a name match with `parsed.data.playerName`.
-                    nationality: (p.name === parsed.data?.playerName) ? (parsed.data?.playerNationality || 'gb-eng') : 'gb-eng',
-                    status: (p.name === parsed.data?.playerName) ? 'active' : 'linkless',
+                    nationality: (p.name === managerName && managerName) ? (managerNationality || 'gb-eng') : (p.nationality || 'gb-eng'),
+                    status: (p.name === managerName && managerName) ? 'active' : 'linkless',
                     preferredFoot: 'Right',
                     captain: !!p.captain,
                     reliability: 100, // New team = 100%

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { ArrowRight, ChevronLeft, Check, Trophy, Users, Calendar, Wallet, Plus, X, Lock, Play, Clock, MapPin, PoundSterling, Shirt, Search, Link as LinkIcon, Briefcase } from 'lucide-react';
 import { OnboardingData, OnboardingRole } from '@/hooks/use-onboarding';
 import { useLanguage } from '@/hooks/use-language';
+import { formatName } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { TacticsBoard } from '@/components/dashboard/tactics-board';
 import { api } from '@/services/api';
@@ -167,7 +168,7 @@ export function OnboardingSteps({ currentStep, role, data, onSetRole, onUpdate, 
 
         const handleAdd = () => {
             if (newName.trim()) {
-                onUpdate({ players: [...data.players, { name: newName, position: 'MID' }] });
+                onUpdate({ players: [...data.players, { name: formatName(newName), position: 'MID' }] });
                 setNewName('');
             }
         };
@@ -311,6 +312,13 @@ export function OnboardingSteps({ currentStep, role, data, onSetRole, onUpdate, 
 
                 // Add manager at the TOP of the list
                 const finalPlayers = [managerPlayer, ...data.players];
+
+                // CRITICAL: Save to permanent storage so it survives resetOnboarding
+                // We use a separate key 'wts-squad-data' for the roster
+                if (typeof window !== 'undefined') {
+                    window.localStorage.setItem('wts-squad-data', JSON.stringify(finalPlayers));
+                }
+
                 onUpdate({ players: finalPlayers });
 
                 // Allow state to propagate
@@ -556,7 +564,7 @@ export function OnboardingSteps({ currentStep, role, data, onSetRole, onUpdate, 
                         {currentStep === 4 && (
                             <ManagerNameScreen
                                 data={data}
-                                onUpdate={onUpdate}
+                                onUpdate={(updates) => onUpdate({ ...updates, playerName: updates.playerName ? formatName(updates.playerName) : updates.playerName })}
                                 onNext={onNext}
                             />
                         )}
