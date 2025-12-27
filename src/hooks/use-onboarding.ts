@@ -1,4 +1,5 @@
 import { useLocalStorage } from './use-local-storage';
+import { useCallback } from 'react';
 
 export type TeamSize = 5 | 6 | 7 | 11;
 export type OnboardingRole = 'MANAGER' | 'PLAYER' | null;
@@ -57,51 +58,51 @@ const INITIAL_STATE: OnboardingState = {
 export function useOnboarding() {
     const [state, setState, isLoaded] = useLocalStorage<OnboardingState>('wts-onboarding-progress-v2', INITIAL_STATE);
 
-    const setRole = (role: OnboardingRole) => {
+    const setRole = useCallback((role: OnboardingRole) => {
         setState((prev) => ({
             ...prev,
             role
         }));
-    };
+    }, [setState]);
 
-    const updateData = (updates: Partial<OnboardingData>) => {
+    const updateData = useCallback((updates: Partial<OnboardingData>) => {
         setState((prev) => ({
             ...prev,
             data: { ...prev.data, ...updates }
         }));
-    };
+    }, [setState]);
 
-    const nextStep = () => {
+    const nextStep = useCallback(() => {
         setState((prev) => ({
             ...prev,
             step: prev.step + 1
         }));
-    };
+    }, [setState]);
 
-    const prevStep = () => {
+    const prevStep = useCallback(() => {
         setState((prev) => ({
             ...prev,
             step: Math.max(0, prev.step - 1)
         }));
-    };
+    }, [setState]);
 
-    const setStep = (step: number) => {
+    const setStep = useCallback((step: number) => {
         setState((prev) => ({
             ...prev,
             step
         }));
-    };
+    }, [setState]);
 
-    const completeOnboarding = () => {
+    const completeOnboarding = useCallback(() => {
         setState((prev) => ({
             ...prev,
             completed: true
         }));
-    };
+    }, [setState]);
 
-    const resetOnboarding = () => {
+    const resetOnboarding = useCallback(() => {
         setState(INITIAL_STATE);
-    };
+    }, [setState]);
 
     return {
         state,

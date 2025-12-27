@@ -43,7 +43,7 @@ export function ManagerNameScreen({ data, onUpdate, onNext }: ManagerNameScreenP
                             onChange={(e) => onUpdate({ playerName: e.target.value })}
                             onKeyDown={handleKeyDown}
                             placeholder={t('onboarding.manager_name_placeholder')}
-                            className="w-full bg-black/50 border border-white/10 focus:border-wts-green rounded-xl py-4 pl-14 pr-5 text-white placeholder-gray-700 outline-none transition-all duration-200 font-bold uppercase tracking-wide text-lg"
+                            className="w-full bg-black/50 border border-white/10 focus:border-wts-green rounded-xl py-4 pl-14 pr-5 text-white placeholder-gray-700 outline-none transition-all duration-200 font-bold text-lg"
                             autoFocus
                         />
                     </div>

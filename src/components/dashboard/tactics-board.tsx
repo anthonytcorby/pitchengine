@@ -173,8 +173,8 @@ export function TacticsBoard({
                     <button
                         onClick={() => onTogglePossession?.('in')}
                         className={`px-4 py-2 rounded-md text-[10px] font-bold uppercase tracking-widest transition-all ${possessionMode === 'in'
-                                ? 'bg-wts-green text-black shadow-lg'
-                                : 'text-gray-500 hover:text-white hover:bg-white/5'
+                            ? 'bg-wts-green text-black shadow-lg'
+                            : 'text-gray-500 hover:text-white hover:bg-white/5'
                             }`}
                     >
                         In Possession
@@ -182,8 +182,8 @@ export function TacticsBoard({
                     <button
                         onClick={() => onTogglePossession?.('out')}
                         className={`px-4 py-2 rounded-md text-[10px] font-bold uppercase tracking-widest transition-all ${possessionMode === 'out'
-                                ? 'bg-red-500 text-white shadow-lg'
-                                : 'text-gray-500 hover:text-white hover:bg-white/5'
+                            ? 'bg-red-500 text-white shadow-lg'
+                            : 'text-gray-500 hover:text-white hover:bg-white/5'
                             }`}
                     >
                         Out of Poss
@@ -301,7 +301,7 @@ export function TacticsBoard({
                                                         />
                                                     </div>
                                                 )}
-                                                <span className="text-[10px] font-black text-white uppercase tracking-[0.1em] leading-none max-w-[80px] truncate">
+                                                <span className="text-[10px] font-black text-white leading-none max-w-[80px] truncate">
                                                     {displayNames[player.id]}
                                                 </span>
                                             </div>
