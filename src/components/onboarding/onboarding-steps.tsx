@@ -206,9 +206,18 @@ export function OnboardingSteps({ currentStep, role, data, onSetRole, onUpdate, 
                             className="bg-black/50 border border-white/10 focus:border-wts-green rounded-xl px-4 py-3 text-white outline-none transition-colors font-bold uppercase tracking-wide"
                         >
                             <option value="GK">GK</option>
-                            <option value="DEF">DEF</option>
-                            <option value="MID">MID</option>
-                            <option value="FWD">FWD</option>
+                            <option value="LB">LB</option>
+                            <option value="CB">CB</option>
+                            <option value="RB">RB</option>
+                            <option value="LM">LM</option>
+                            <option value="CM">CM</option>
+                            <option value="CDM">CDM</option>
+                            <option value="CAM">CAM</option>
+                            <option value="RM">RM</option>
+                            <option value="LW">LW</option>
+                            <option value="RW">RW</option>
+                            <option value="CF">CF</option>
+                            <option value="ST">ST</option>
                         </select>
                         <button
                             onClick={handleAdd}
@@ -492,10 +501,19 @@ export function OnboardingSteps({ currentStep, role, data, onSetRole, onUpdate, 
                         onChange={(e) => onUpdate({ playerPosition: e.target.value })}
                         className="w-full bg-black/50 border border-white/10 focus:border-wts-green rounded-xl px-4 py-3 text-white outline-none transition-colors font-bold uppercase tracking-wide"
                     >
-                        <option value="GK">Goalkeeper</option>
-                        <option value="DEF">Defender</option>
-                        <option value="MID">Midfielder</option>
-                        <option value="FWD">Forward</option>
+                        <option value="GK">GK</option>
+                        <option value="LB">LB</option>
+                        <option value="CB">CB</option>
+                        <option value="RB">RB</option>
+                        <option value="LM">LM</option>
+                        <option value="CM">CM</option>
+                        <option value="CDM">CDM</option>
+                        <option value="CAM">CAM</option>
+                        <option value="RM">RM</option>
+                        <option value="LW">LW</option>
+                        <option value="RW">RW</option>
+                        <option value="CF">CF</option>
+                        <option value="ST">ST</option>
                     </select>
                 </div>
             </div>

@@ -1,4 +1,4 @@
-export type Role = 'GK' | 'CB' | 'LB' | 'RB' | 'CDM' | 'CM' | 'CAM' | 'LM' | 'RM' | 'LW' | 'RW' | 'ST';
+export type Role = 'GK' | 'CB' | 'LB' | 'RB' | 'CDM' | 'CM' | 'CAM' | 'LM' | 'RM' | 'LW' | 'RW' | 'CF' | 'ST';
 
 export type FixtureType = 'LEAGUE' | 'CUP' | 'FRIENDLY';
 export type FixtureStatus = 'upcoming' | 'completed' | 'cancelled';

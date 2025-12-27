@@ -109,7 +109,7 @@ export function PlayerModal({ isOpen, onClose, player, teamName, onSave, onRelea
                                     onChange={(e) => setFormData({ ...formData, role: e.target.value as Role, position: e.target.value as Role })}
                                     className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-wts-green/50"
                                 >
-                                    {['GK', 'CB', 'LB', 'RB', 'CDM', 'CM', 'CAM', 'LM', 'RM', 'LW', 'RW', 'ST'].map(role => (
+                                    {['GK', 'LB', 'CB', 'RB', 'LM', 'CM', 'CDM', 'CAM', 'RM', 'LW', 'RW', 'CF', 'ST'].map(role => (
                                         <option key={role} value={role}>{role}</option>
                                     ))}
                                 </select>
