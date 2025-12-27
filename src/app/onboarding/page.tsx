@@ -3,7 +3,7 @@
 import { useOnboarding } from '@/hooks/use-onboarding';
 import { OnboardingSteps } from '@/components/onboarding/onboarding-steps';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, Suspense } from 'react';
+import { useEffect, Suspense, useState } from 'react';
 
 function OnboardingContent() {
     const { state, setRole, updateData, nextStep, prevStep, setStep, completeOnboarding, resetOnboarding, isLoaded } = useOnboarding();
@@ -12,21 +12,27 @@ function OnboardingContent() {
     const searchParams = useSearchParams();
     const mode = searchParams.get('mode');
 
+    const [isReadyForRedirect, setIsReadyForRedirect] = useState(mode !== 'create');
+
     // Reset onboarding if mode=create
     useEffect(() => {
-        if (mode === 'create' && isLoaded) { // Only reset if we know we loaded (avoids race with reading storage)
+        if (mode === 'create' && isLoaded) { // Only reset if we know we loaded
             resetOnboarding();
+            // Allow state to update before enabling redirect
+            // checking state.step === 0 might be safer but this should work with the render cycle
+            setIsReadyForRedirect(true);
+        } else if (mode !== 'create') {
+            setIsReadyForRedirect(true);
         }
     }, [mode, resetOnboarding, isLoaded]);
 
-    // Check completion (only if NOT in create mode or after reset)
+    // Check completion
     useEffect(() => {
-        // If we are in create mode, we shouldn't redirect even if state says completed 
-        // (though resetOnboarding should handle this, the React state update might lag slightly)
-        if (isLoaded && state.completed && mode !== 'create') {
+        // Only redirect if loaded, completed, AND we assume the reset has been handled (isReady)
+        if (isLoaded && state.completed && isReadyForRedirect) {
             router.push('/dashboard');
         }
-    }, [state.completed, router, mode, isLoaded]);
+    }, [state.completed, router, isReadyForRedirect, isLoaded]);
 
     if (!isLoaded) return <div className="min-h-screen bg-black flex items-center justify-center text-wts-green font-mono text-xs">LOADING...</div>;
 
